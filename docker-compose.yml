@@ -65,23 +65,26 @@ services:
     networks:
       - lambari_network
 
-  ai-processor:
-    build: .
-    container_name: lambari_ai_processor
-    command: ["sh", "-c", "while true; do echo 'Starting AI processing...'; python ai_processor.py; echo 'AI processing completed. Sleeping for 1 minute...'; sleep 60; done"]
-    environment:
-      DIRECTUS_URL: "http://directus:8055"
-      DIRECTUS_ADMIN_EMAIL: "admin@example.com"
-      DIRECTUS_ADMIN_PASSWORD: "password"
-      GOOGLE_API_KEY: ${GOOGLE_API_KEY}
+  caddy:
+    image: caddy:2
+    container_name: lambari_caddy
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile
+      - caddy_data:/data
+      - caddy_config:/config
     depends_on:
-      - directus
+      - fastapi
     networks:
       - lambari_network
 
 volumes:
   postgres_data:
   directus_uploads:
+  caddy_data:
+  caddy_config:
 
 networks:
   lambari_network:
