@@ -2,12 +2,14 @@ import httpx
 import asyncio
 import google.generativeai as genai
 from datetime import datetime
+import os
 
-# Hardcoded Configuration
-DIRECTUS_URL = "http://directus:8055"
-DIRECTUS_ADMIN_EMAIL = "admin@example.com"
-DIRECTUS_ADMIN_PASSWORD = "password"
-GOOGLE_API_KEY = "AIzaSyBXmW7BWgLuFWATbz8ylmlu6wD-_fXsGgo"
+# Configuration from environment variables
+DIRECTUS_URL = os.getenv("DIRECTUS_URL", "http://directus:8055")
+DIRECTUS_ADMIN_EMAIL = os.getenv("DIRECTUS_ADMIN_EMAIL", "admin@example.com")
+DIRECTUS_ADMIN_PASSWORD = os.getenv("DIRECTUS_ADMIN_PASSWORD", "password")
+DIRECTUS_API_TOKEN = os.getenv("DIRECTUS_API_TOKEN")
+GOOGLE_API_KEY = os.getenv("GOOGLE_API_KEY", "AIzaSyBXmW7BWgLuFWATbz8ylmlu6wD-_fXsGgo")
 
 # Configure Google AI
 genai.configure(api_key=GOOGLE_API_KEY)
@@ -28,18 +30,34 @@ O texto original é sobre uma reportagem. Reescreva-o de forma jornalística pro
 """
 
 async def authenticate_directus():
-    """Authenticate with Directus and return access token"""
+    """Authenticate with Directus and return the access token"""
     async with httpx.AsyncClient() as client:
         try:
-            response = await client.post(f"{DIRECTUS_URL}/auth/login", json={
+            auth_response = await client.post(f"{DIRECTUS_URL}/auth/login", json={
                 "email": DIRECTUS_ADMIN_EMAIL,
                 "password": DIRECTUS_ADMIN_PASSWORD
             })
-            response.raise_for_status()
-            return response.json()['data']['access_token']
+            auth_response.raise_for_status()
+            token = auth_response.json()['data']['access_token']
+            return token
         except Exception as e:
             print(f"Error authenticating with Directus: {e}")
             return None
+
+async def wait_for_directus():
+    """Wait for Directus to be ready"""
+    print("Waiting for Directus to be ready...")
+    max_attempts = 30  # Wait up to 5 minutes (30 * 10s)
+    attempt = 0
+    while attempt < max_attempts:
+        token = await authenticate_directus()
+        if token:
+            print("Directus is ready!")
+            return token
+        attempt += 1
+        print(f"Attempt {attempt}/{max_attempts} failed. Retrying in 10 seconds...")
+        await asyncio.sleep(10)
+    raise Exception("Directus did not become ready within the timeout period.")
 
 async def get_unprocessed_videos(token):
     """Get videos that don't have descricao_ia filled"""
@@ -116,10 +134,11 @@ async def process_videos():
     """Main function to process videos with AI"""
     print("Starting AI video processing...")
 
-    # Authenticate with Directus
-    token = await authenticate_directus()
-    if not token:
-        print("Failed to authenticate with Directus")
+    # Wait for Directus and authenticate
+    try:
+        token = await wait_for_directus()
+    except Exception as e:
+        print(f"Failed to connect to Directus: {e}")
         return
 
     # Get unprocessed videos

@@ -3,9 +3,9 @@ services:
     image: postgres:13
     container_name: lambari_db
     environment:
-      POSTGRES_DB: lambari_db
-      POSTGRES_USER: lambari_user
-      POSTGRES_PASSWORD: lambari_password
+      POSTGRES_DB: ${DB_DATABASE}
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
     volumes:
       - postgres_data:/var/lib/postgresql/data
     networks:
@@ -17,16 +17,17 @@ services:
     ports:
       - "8055:8055"
     environment:
-      KEY: "dummy-key"
-      SECRET: "dummy-secret"
+      KEY: ${DIRECTUS_KEY}
+      SECRET: ${DIRECTUS_SECRET}
       DB_CLIENT: "pg"
       DB_HOST: "db"
       DB_PORT: "5432"
-      DB_DATABASE: "lambari_db"
-      DB_USER: "lambari_user"
-      DB_PASSWORD: "lambari_password"
-      ADMIN_EMAIL: "admin@example.com"
-      ADMIN_PASSWORD: "password"
+      DB_DATABASE: ${DB_DATABASE}
+      DB_USER: ${DB_USER}
+      DB_PASSWORD: ${DB_PASSWORD}
+      ADMIN_EMAIL: ${ADMIN_EMAIL}
+      ADMIN_PASSWORD: ${ADMIN_PASSWORD}
+      PUBLIC_URL: "http://localhost:8055"
       WEBSOCKETS_ENABLED: "true"
     depends_on:
       - db
@@ -51,10 +52,28 @@ services:
     networks:
       - lambari_network
 
+  setup:
+    build: .
+    container_name: lambari_setup
+    command: ["python", "setup_directus.py"]
+    environment:
+      DIRECTUS_URL: "http://directus:8055"
+      DIRECTUS_ADMIN_EMAIL: ${ADMIN_EMAIL}
+      DIRECTUS_ADMIN_PASSWORD: ${ADMIN_PASSWORD}
+    depends_on:
+      - directus
+    networks:
+      - lambari_network
+
   ai-processor:
     build: .
     container_name: lambari_ai_processor
     command: ["sh", "-c", "while true; do echo 'Starting AI processing...'; python ai_processor.py; echo 'AI processing completed. Sleeping for 1 minute...'; sleep 60; done"]
+    environment:
+      DIRECTUS_URL: "http://directus:8055"
+      DIRECTUS_ADMIN_EMAIL: "admin@example.com"
+      DIRECTUS_ADMIN_PASSWORD: "password"
+      GOOGLE_API_KEY: ${GOOGLE_API_KEY}
     depends_on:
       - directus
     networks:
