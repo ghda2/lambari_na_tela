@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Detalhes da Reportagem</title>
+    <link rel="stylesheet" href="/scr/admin.css">
+    <style>
+        .video-detail-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .detail-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 2rem;
+            border-radius: 15px;
+            margin-bottom: 2rem;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+        }
+
+        .detail-header h1 {
+            margin: 0 0 0.5rem 0;
+            font-size: 2.5rem;
+            font-weight: 700;
+        }
+
+        .detail-meta {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            margin-bottom: 1rem;
+            font-size: 0.9rem;
+        }
+
+        .meta-item {
+            background: rgba(255,255,255,0.2);
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            backdrop-filter: blur(10px);
+        }
+
+        .detail-content {
+            display: grid;
+            grid-template-columns: 1fr 300px;
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .content-main {
+            background: white;
+            padding: 2rem;
+            border-radius: 15px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+        }
+
+        .content-sidebar {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 15px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+            height: fit-content;
+        }
+
+        .description-section {
+            margin-bottom: 2rem;
+        }
+
+        .description-section h3 {
+            color: #333;
+            margin-bottom: 1rem;
+            font-size: 1.3rem;
+            border-bottom: 2px solid #667eea;
+            padding-bottom: 0.5rem;
+        }
+
+        .description-text {
+            line-height: 1.7;
+            color: #555;
+            white-space: pre-wrap;
+        }
+
+        .media-section {
+            margin-bottom: 2rem;
+        }
+
+        .media-section h3 {
+            color: #333;
+            margin-bottom: 1rem;
+            font-size: 1.3rem;
+            border-bottom: 2px solid #667eea;
+            padding-bottom: 0.5rem;
+        }
+
+        .media-item {
+            margin-bottom: 1rem;
+        }
+
+        .media-link {
+            display: inline-block;
+            background: #667eea;
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            margin-bottom: 0.5rem;
+        }
+
+        .media-link:hover {
+            background: #5a6fd8;
+            transform: translateY(-2px);
+        }
+
+        .media-preview img,
+        .media-preview video {
+            max-width: 100%;
+            border-radius: 8px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        .status-section {
+            margin-bottom: 2rem;
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        .status-processed {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .status-pending {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .actions-section {
+            border-top: 1px solid #eee;
+            padding-top: 1.5rem;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            margin-right: 0.5rem;
+        }
+
+        .btn-primary {
+            background: #667eea;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #5a6fd8;
+            transform: translateY(-2px);
+        }
+
+        .btn-secondary {
+            background: #6c757d;
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background: #5a6268;
+            transform: translateY(-2px);
+        }
+
+        @media (max-width: 768px) {
+            .detail-content {
+                grid-template-columns: 1fr;
+            }
+
+            .detail-header h1 {
+                font-size: 2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="video-detail-container">
+        <div class="detail-header">
+            <h1>{{ video.titulo }}</h1>
+            <div class="detail-meta">
+                <span class="meta-item">👤 {{ video.primeiro_nome }} {{ video.sobrenome }}</span>
+                <span class="meta-item">📂 {{ video.categoria }}</span>
+                <span class="meta-item">📅 {{ video.formatted_datetime }}</span>
+                <span class="meta-item">🌐 {{ video.ip }}</span>
+            </div>
+        </div>
+
+        <div class="detail-content">
+            <div class="content-main">
+                <div class="description-section">
+                    <h3>📝 Descrição Original</h3>
+                    <div class="description-text">{{ video.descricao }}</div>
+                </div>
+
+                <div class="description-section">
+                    <h3>🤖 Descrição Processada por IA</h3>
+                    {% if video.descricao_ia %}
+                        <div class="description-text">{{ video.descricao_ia }}</div>
+                    {% else %}
+                        <div style="color: #856404; font-style: italic; padding: 2rem; text-align: center; background: #fff3cd; border-radius: 8px;">
+                            ⏳ Esta reportagem ainda não foi processada pela Inteligência Artificial.<br>
+                            O processamento ocorrerá automaticamente em breve.
+                        </div>
+                    {% endif %}
+                </div>
+
+                <div class="media-section">
+                    <h3>📎 Mídia Anexada</h3>
+                    {% if video.img_path or video.video_path %}
+                        <div class="media-preview">
+                            {% if video.img_path %}
+                                <div class="media-item">
+                                    <a href="/{{ video.img_path }}" target="_blank" class="media-link">📷 Visualizar Imagem Completa</a>
+                                    <br>
+                                    <img src="/{{ video.img_path }}" alt="Imagem da reportagem" style="margin-top: 1rem;">
+                                </div>
+                            {% endif %}
+                            {% if video.video_path %}
+                                <div class="media-item">
+                                    <a href="/{{ video.video_path }}" target="_blank" class="media-link">🎥 Visualizar Vídeo Completo</a>
+                                    <br>
+                                    <video controls style="margin-top: 1rem;">
+                                        <source src="/{{ video.video_path }}" type="video/mp4">
+                                        Seu navegador não suporta vídeos.
+                                    </video>
+                                </div>
+                            {% endif %}
+                        </div>
+                    {% else %}
+                        <div style="color: #6c757d; font-style: italic; padding: 2rem; text-align: center; background: #f8f9fa; border-radius: 8px;">
+                            📭 Nenhuma mídia foi anexada a esta reportagem.
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+
+            <div class="content-sidebar">
+                <div class="status-section">
+                    <h3>📊 Status do Processamento</h3>
+                    {% if video.descricao_ia %}
+                        <span class="status-badge status-processed">✅ Processado por IA</span>
+                    {% else %}
+                        <span class="status-badge status-pending">⏳ Aguardando IA</span>
+                    {% endif %}
+                </div>
+
+                <div class="actions-section">
+                    <h3>🔧 Ações</h3>
+                    <a href="/admin" class="btn btn-primary">← Voltar ao Painel</a>
+                    <br><br>
+                    <a href="/" class="btn btn-secondary">🏠 Ir ao Site</a>
+                </div>
+
+                <div style="margin-top: 2rem; padding: 1rem; background: #f8f9fa; border-radius: 8px; font-size: 0.9rem; color: #666;">
+                    <strong>ID da Reportagem:</strong> {{ video.id }}<br>
+                    <strong>Status:</strong> Ativa
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html></content>
+    <filePath>c:\Users\gabri\Desktop\Lambari Na Tela\templates\video_detail.html</filePath>
+</xai:function_call">...

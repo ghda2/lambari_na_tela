@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Painel Administrativo</title>
+    <link rel="stylesheet" href="scr/admin.css">
+</head>
+<body>
+    <div class="admin-container">
+        <div class="admin-header">
+            <h1>📊 Painel Administrativo</h1>
+            <div class="admin-actions">
+                <a href="/logout" class="btn btn-secondary">🚪 Sair</a>
+                <a href="/" class="btn btn-primary">🏠 Voltar ao Site</a>
+            </div>
+        </div>
+
+        <div class="stats-grid">
+            <div class="stat-card">
+                <h3>{{ videos|length }}</h3>
+                <p>Reportagens Cadastradas</p>
+            </div>
+            <div class="stat-card">
+                <h3>{{ videos|selectattr('descricao_ia')|list|length }}</h3>
+                <p>Processadas por IA</p>
+            </div>
+            <div class="stat-card">
+                <h3>{{ videos|rejectattr('descricao_ia')|list|length }}</h3>
+                <p>Aguardando IA</p>
+            </div>
+        </div>
+
+        <div class="videos-table">
+            <div class="table-header">
+                <h2>📝 Reportagens Cadastradas</h2>
+            </div>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Título</th>
+                        <th>Resumo</th>
+                        <th>Status IA</th>
+                        <th>Data</th>
+                        <th>Ações</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for video in videos %}
+                    <tr>
+                        <td>
+                            <div class="video-title">{{ video.titulo }}</div>
+                        </td>
+                        <td>
+                            <div class="video-summary">
+                                {{ video.descricao|truncate(100) }}
+                            </div>
+                        </td>
+                        <td>
+                            {% if video.descricao_ia %}
+                                <span class="status-badge status-processed">✅ Processado</span>
+                            {% else %}
+                                <span class="status-badge status-pending">⏳ Pendente</span>
+                            {% endif %}
+                        </td>
+                        <td>{{ video.formatted_datetime }}</td>
+                        <td>
+                            <a href="/admin/video/{{ video.id }}" class="btn btn-sm btn-primary">👁️ Ver Detalhes</a>
+                        </td>
+                    </tr>
+                    {% else %}
+                    <tr>
+                        <td colspan="5" class="no-data">
+                            <h3>📭 Nenhuma reportagem cadastrada ainda</h3>
+                            <p>As reportagens aparecerão aqui após serem enviadas pelo formulário.</p>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <script>
+        // Função simples para navegação
+        function viewDetails(videoId) {
+            window.location.href = '/admin/video/' + videoId;
+        }
+    </script>
+</body>
+</html>

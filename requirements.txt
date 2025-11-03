@@ -1,0 +1,10 @@
+fastapi
+uvicorn
+python-multipart
+jinja2
+psycopg2-binary
+httpx
+python-jose[cryptography]
+passlib[bcrypt]
+bcrypt==3.2.0
+google-generativeai

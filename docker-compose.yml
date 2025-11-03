@@ -1,0 +1,69 @@
+services:
+  db:
+    image: postgres:13
+    container_name: lambari_db
+    environment:
+      POSTGRES_DB: lambari_db
+      POSTGRES_USER: lambari_user
+      POSTGRES_PASSWORD: lambari_password
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - lambari_network
+
+  directus:
+    image: directus/directus:latest
+    container_name: lambari_directus
+    ports:
+      - "8055:8055"
+    environment:
+      KEY: "dummy-key"
+      SECRET: "dummy-secret"
+      DB_CLIENT: "pg"
+      DB_HOST: "db"
+      DB_PORT: "5432"
+      DB_DATABASE: "lambari_db"
+      DB_USER: "lambari_user"
+      DB_PASSWORD: "lambari_password"
+      ADMIN_EMAIL: "admin@example.com"
+      ADMIN_PASSWORD: "password"
+      WEBSOCKETS_ENABLED: "true"
+    depends_on:
+      - db
+    volumes:
+      - directus_uploads:/directus/uploads
+    networks:
+      - lambari_network
+
+  fastapi:
+    build: .
+    container_name: lambari_fastapi
+    ports:
+      - "8000:8000"
+    environment:
+      SECRET_KEY: "your-secret-key-here"
+      ADMIN_USERNAME: "admin"
+      ADMIN_PASSWORD: "secret"
+    depends_on:
+      - db
+    volumes:
+      - ./uploads:/app/uploads
+    networks:
+      - lambari_network
+
+  ai-processor:
+    build: .
+    container_name: lambari_ai_processor
+    command: ["sh", "-c", "while true; do echo 'Starting AI processing...'; python ai_processor.py; echo 'AI processing completed. Sleeping for 1 minute...'; sleep 60; done"]
+    depends_on:
+      - directus
+    networks:
+      - lambari_network
+
+volumes:
+  postgres_data:
+  directus_uploads:
+
+networks:
+  lambari_network:
+    driver: bridge

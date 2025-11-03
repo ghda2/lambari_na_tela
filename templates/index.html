@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cadastro de Reportagem</title>
+    <link rel="stylesheet" href="scr/style.css">
+</head>
+<body>
+    <div id="chat-widget">
+        <div id="chat-header">
+            <h1>📰 Cadastro de Reportagem</h1>
+            <div class="progress-bar">
+                <div class="progress-fill" id="progress-fill"></div>
+            </div>
+        </div>
+        <div id="chat-messages"></div>
+        <div id="chat-input-container"></div>
+    </div>
+
+    <form id="hidden-form" action="/videos" method="post" enctype="multipart/form-data" style="display: none;">
+        <input type="text" id="primeiro_nome" name="primeiro_nome" required>
+        <input type="text" id="sobrenome" name="sobrenome" required>
+        <input type="text" id="titulo" name="titulo" required>
+        <textarea id="descricao" name="descricao" rows="4" required></textarea>
+        <select id="categoria" name="categoria" required>
+            <option value="" disabled selected>Selecione uma categoria...</option>
+            <option value="politica">Política</option>
+            <option value="esportes">Esportes</option>
+            <option value="tecnologia">Tecnologia</option>
+            <option value="entretenimento">Entretenimento</option>
+            <option value="saude">Saúde</option>
+            <option value="local">Local</option>
+            <option value="outro">Outro</option>
+        </select>
+        <input type="file" id="img_path" name="img_path" accept="image/*">
+        <input type="file" id="video_path" name="video_path" accept="video/*">
+    </form>
+
+    <script src="scr/main.js"></script>
+</body>
+</html>
