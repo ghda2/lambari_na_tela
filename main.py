@@ -113,6 +113,10 @@ async def setup_directus():
 async def read_root(request: Request):
     return templates.TemplateResponse("index.html", {"request": request})
 
+@app.get("/forms", response_class=HTMLResponse)
+async def forms_page(request: Request):
+    return templates.TemplateResponse("forms.html", {"request": request})
+
 @app.post("/videos", response_class=RedirectResponse)
 async def create_video(request: Request,
                      primeiro_nome: str = Form(...),

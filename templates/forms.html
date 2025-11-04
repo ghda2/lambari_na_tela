@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cadastro de Reportagem</title>
+    <link rel="stylesheet" href="scr/style.css">
+    <style>
+        /* Modal Styles */
+        .modal {
+            display: block;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(5px);
+        }
+        .modal-content {
+            background-color: #fff;
+            margin: 5% auto;
+            padding: 20px;
+            border-radius: 10px;
+            width: 90%;
+            max-width: 600px;
+            max-height: 80vh;
+            overflow-y: auto;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+        .modal h2 {
+            color: #2d2c44;
+            font-size: 1.5rem;
+            margin-bottom: 15px;
+        }
+        .modal p {
+            line-height: 1.6;
+            margin-bottom: 10px;
+            color: #333;
+        }
+        .modal .accept-btn {
+            background: #ed3237;
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 25px;
+            font-size: 1rem;
+            cursor: pointer;
+            margin-top: 20px;
+            display: block;
+            width: 100%;
+            transition: background 0.3s;
+        }
+        .modal .accept-btn:hover {
+            background: #d12a32;
+        }
+        .hidden {
+            display: none !important;
+        }
+    </style>
+</head>
+<body>
+    <!-- Modal de Política -->
+    <div id="policy-modal" class="modal">
+        <div class="modal-content">
+            <h2>📰 POLÍTICA DE PUBLICAÇÃO – LAMBARI NA TELA</h2>
+            <p>Antes de enviar sua reportagem, pedimos atenção às nossas diretrizes:</p>
+            <p>🚫 Não serão aceitas publicações de cunho político, seja de partidos, candidatos ou representantes — incluindo tanto os que estão no poder municipal (prefeitura, secretarias, etc.) quanto os de oposição. Nosso objetivo é manter um espaço neutro, informativo e livre de partidarismos.</p>
+            <p>🚫 Não serão aprovadas postagens com linguagem ofensiva, acusações pessoais, ataques, difamações ou conteúdo de baixo calão.</p>
+            <p>🕒 Todas as reportagens passam por uma análise editorial antes de serem publicadas, com prazo de 1 a 4 horas para avaliação e liberação.</p>
+            <p>📞 Caso surja alguma dúvida durante o processo de verificação, nossa equipe entrará em contato pelo WhatsApp informado por você no formulário de envio.</p>
+            <p>✅ Agradecemos por contribuir com informações e por ajudar a manter o Lambari na Tela como um espaço de notícias responsáveis, respeitosas e de interesse público.</p>
+            <button class="accept-btn" onclick="acceptPolicy()">Aceitar e Continuar</button>
+        </div>
+    </div>
+
+    <div id="main-content" class="hidden">
+        <div id="chat-widget">
+            <div id="chat-header">
+                <h1>📰 Cadastro de Reportagem</h1>
+                <div class="progress-bar">
+                    <div class="progress-fill" id="progress-fill"></div>
+                </div>
+            </div>
+            <div id="chat-messages"></div>
+            <div id="chat-input-container"></div>
+        </div>
+
+        <form id="hidden-form" action="/videos" method="post" enctype="multipart/form-data" style="display: none;">
+            <input type="text" id="primeiro_nome" name="primeiro_nome" required>
+            <input type="text" id="sobrenome" name="sobrenome" required>
+            <input type="text" id="titulo" name="titulo" required>
+            <textarea id="descricao" name="descricao" rows="4" required></textarea>
+            <select id="categoria" name="categoria" required>
+                <option value="" disabled selected>Selecione uma categoria...</option>
+                <option value="politica">Política</option>
+                <option value="esportes">Esportes</option>
+                <option value="tecnologia">Tecnologia</option>
+                <option value="entretenimento">Entretenimento</option>
+                <option value="saude">Saúde</option>
+                <option value="local">Local</option>
+                <option value="outro">Outro</option>
+            </select>
+            <input type="file" id="img_path" name="img_path" accept="image/*">
+            <input type="file" id="video_path" name="video_path" accept="video/*">
+        </form>
+    </div>
+
+    <script>
+        function acceptPolicy() {
+            document.getElementById('policy-modal').classList.add('hidden');
+            document.getElementById('main-content').classList.remove('hidden');
+        }
+    </script>
+    <script src="scr/main.js"></script>
+</body>
+</html>
