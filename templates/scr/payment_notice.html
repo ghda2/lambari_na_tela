@@ -187,21 +187,40 @@
 </style>
 
 <script>
-    function copyPixKey() {
+    async function copyPixKey() {
         const pixKeyInput = document.getElementById('pix-key');
+        const pixKey = pixKeyInput.value;
+        const btn = document.querySelector('.copy-btn');
+        const originalText = btn.textContent;
         
-        // Seleciona o conteúdo do input
-        pixKeyInput.select();
-        pixKeyInput.setSelectionRange(0, 99999); // Para dispositivos móveis
+        // Tenta usar a API moderna do Clipboard
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+            try {
+                await navigator.clipboard.writeText(pixKey);
+                
+                // Mostra feedback visual
+                btn.textContent = '✅ Copiado!';
+                btn.style.background = '#45a049';
+                
+                setTimeout(() => {
+                    btn.textContent = originalText;
+                    btn.style.background = '#4caf50';
+                }, 2000);
+                return;
+            } catch (err) {
+                console.error('Erro na API Clipboard:', err);
+            }
+        }
         
+        // Fallback: método antigo
         try {
-            // Executa o comando de copiar
+            pixKeyInput.select();
+            pixKeyInput.setSelectionRange(0, 99999);
+            
             const successful = document.execCommand('copy');
+            window.getSelection().removeAllRanges();
             
             if (successful) {
-                // Mostra feedback visual
-                const btn = document.querySelector('.copy-btn');
-                const originalText = btn.textContent;
                 btn.textContent = '✅ Copiado!';
                 btn.style.background = '#45a049';
                 
@@ -210,14 +229,11 @@
                     btn.style.background = '#4caf50';
                 }, 2000);
             } else {
-                alert('Por favor, copie manualmente o número: 38243772000127');
+                throw new Error('execCommand falhou');
             }
         } catch (err) {
-            console.error('Erro ao copiar:', err);
-            alert('Por favor, copie manualmente o número: 38243772000127');
+            console.error('Erro no fallback:', err);
+            alert('Não foi possível copiar automaticamente. Por favor, copie manualmente o número: 38243772000127');
         }
-        
-        // Remove a seleção após copiar
-        window.getSelection().removeAllRanges();
     }
 </script>
