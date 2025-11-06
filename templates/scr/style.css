@@ -191,6 +191,7 @@ body {
 }
 
 #chat-input-container input[type="text"],
+#chat-input-container input[type="tel"],
 #chat-input-container input[type="file"],
 #chat-input-container textarea,
 #chat-input-container select {
@@ -208,6 +209,7 @@ body {
 }
 
 #chat-input-container input[type="text"]:focus,
+#chat-input-container input[type="tel"]:focus,
 #chat-input-container textarea:focus {
     outline: none;
     border-color: var(--accent-color);

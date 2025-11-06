@@ -167,7 +167,6 @@ document.addEventListener("DOMContentLoaded", () => {
             userMessageText = displayText || (value === null ? "⏭️ Pulei esta etapa" : value);
         } else {
             const inputField = document.getElementById("chat-input-field");
-            console.log("Input field:", inputField);
             if (!inputField) {
                 console.error("Input field not found!");
                 return;
@@ -179,7 +178,6 @@ document.addEventListener("DOMContentLoaded", () => {
                 value = inputField.value;
                 userMessageText = value;
             }
-            console.log("Question:", question.id, "Value:", value);
         }
         
         if (question.required && (!value || (typeof value === 'string' && value.trim() === ""))) {
@@ -263,14 +261,13 @@ document.addEventListener("DOMContentLoaded", () => {
                 }
 
                 let questionText = q.text.replace(/[👋🏛️⚽💻🎬🏥📍📝]/g, "")
-                                           .replace("Olá! Para começar, qual é o seu ", "")
-                                           .replace("Ótimo! E qual é o seu ", "")
-                                           .replace("Qual o título da ", "")
-                                           .replace("Descreva a ", "")
-                                           .replace("Em qual categoria a reportagem se encaixa?", "Categoria")
-                                           .replace("(opcional):", "")
-                                           .replace("Envie uma imagem de capa ", "Imagem")
+                                           .replace("Primeiro nos forneça seu ", "")
+                                           .replace("Agora nos informe sua ", "")
+                                           .replace("Qual o seu ", "")
+                                           .replace("Agora nos diga qual o seu ", "")
+                                           .replace("Envie uma imagem:", "Imagem")
                                            .replace("Envie o arquivo de vídeo ", "Vídeo")
+                                           .replace("(opcional):", "")
                                            .trim();
 
                 summaryHtml += `

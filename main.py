@@ -78,34 +78,70 @@ async def setup_directus():
             token = auth_response.json()['data']['access_token']
             headers = {"Authorization": f"Bearer {token}"}
 
-            # 2. Create Collection
-            await client.post(f"{DIRECTUS_URL}/collections", headers=headers, json={
-                "collection": "videos",
-                "schema": {"name": "videos"}
-            })
+            # 2. Create Collections
+            collections = [
+                {"collection": "videos", "schema": {"name": "videos"}},
+                {"collection": "pet_perdido", "schema": {"name": "pet_perdido"}},
+                {"collection": "propaganda", "schema": {"name": "propaganda"}}
+            ]
+            
+            for coll in collections:
+                await client.post(f"{DIRECTUS_URL}/collections", headers=headers, json=coll)
 
-            # 3. Create Fields
-            fields = [
-                {"field": "primeiro_nome", "type": "string"},
-                {"field": "sobrenome", "type": "string"},
-                {"field": "titulo", "type": "string"},
-                {"field": "descricao", "type": "text"},
-                {"field": "descricao_ia", "type": "text"},
-                {"field": "categoria", "type": "string"},
+            # 3. Create Fields for videos collection
+            videos_fields = [
+                {"field": "whatsapp", "type": "string"},
+                {"field": "cidade", "type": "string"},
+                {"field": "bairro", "type": "string"},
+                {"field": "problema", "type": "text"},
                 {"field": "img_path", "type": "string"},
                 {"field": "video_path", "type": "string"},
                 {"field": "ip", "type": "string"},
                 {"field": "datetime", "type": "datetime"}
             ]
 
-            for field in fields:
+            for field in videos_fields:
                 await client.post(f"{DIRECTUS_URL}/fields/videos", headers=headers, json=field)
 
-            return JSONResponse(content={"message": "Directus collection 'videos' created successfully!"})
+            # 4. Create Fields for pet_perdido collection
+            pet_perdido_fields = [
+                {"field": "comprovante_path", "type": "string"},
+                {"field": "whatsapp", "type": "string"},
+                {"field": "nome_pet", "type": "string"},
+                {"field": "tipo_pet", "type": "string"},
+                {"field": "raca", "type": "string"},
+                {"field": "cidade", "type": "string"},
+                {"field": "bairro", "type": "string"},
+                {"field": "descricao", "type": "text"},
+                {"field": "img_path", "type": "string"},
+                {"field": "ip", "type": "string"},
+                {"field": "datetime", "type": "datetime"}
+            ]
+
+            for field in pet_perdido_fields:
+                await client.post(f"{DIRECTUS_URL}/fields/pet_perdido", headers=headers, json=field)
+
+            # 5. Create Fields for propaganda collection
+            propaganda_fields = [
+                {"field": "comprovante_path", "type": "string"},
+                {"field": "whatsapp", "type": "string"},
+                {"field": "nome_negocio", "type": "string"},
+                {"field": "cidade", "type": "string"},
+                {"field": "bairro", "type": "string"},
+                {"field": "descricao", "type": "text"},
+                {"field": "img_path", "type": "string"},
+                {"field": "ip", "type": "string"},
+                {"field": "datetime", "type": "datetime"}
+            ]
+
+            for field in propaganda_fields:
+                await client.post(f"{DIRECTUS_URL}/fields/propaganda", headers=headers, json=field)
+
+            return JSONResponse(content={"message": "Directus collections created successfully!"})
 
         except (httpx.RequestError, httpx.HTTPStatusError) as e:
             if e.response and e.response.status_code == 400:
-                 return JSONResponse(content={"message": "Collection 'videos' might already exist."}, status_code=400)
+                 return JSONResponse(content={"message": "Collections might already exist."}, status_code=400)
             raise HTTPException(status_code=500, detail=f"Error setting up Directus: {e}")
 
 # --- Public Endpoints ---
@@ -117,28 +153,34 @@ async def read_root(request: Request):
 async def forms_page(request: Request):
     return templates.TemplateResponse("forms.html", {"request": request})
 
+@app.get("/pet-perdido", response_class=HTMLResponse)
+async def pet_perdido_page(request: Request):
+    return templates.TemplateResponse("pet_perdido.html", {"request": request})
+
+@app.get("/propaganda", response_class=HTMLResponse)
+async def propaganda_page(request: Request):
+    return templates.TemplateResponse("propaganda.html", {"request": request})
+
 @app.post("/videos", response_class=RedirectResponse)
 async def create_video(request: Request,
-                     primeiro_nome: str = Form(...),
-                     sobrenome: str = Form(...),
-                     titulo: str = Form(...),
-                     descricao: str = Form(...),
-                     categoria: str = Form(...),
+                     whatsapp: str = Form(...),
+                     cidade: str = Form(...),
+                     bairro: str = Form(...),
+                     problema: str = Form(...),
                      img_path: UploadFile = None,
                      video_path: UploadFile = None):
     
-    saved_img_path = save_upload_file(img_path, titulo)
-    saved_video_path = save_upload_file(video_path, titulo)
+    saved_img_path = save_upload_file(img_path)
+    saved_video_path = save_upload_file(video_path)
 
     ip_address = request.client.host
     current_datetime = datetime.now().isoformat()
 
     video_data = {
-        "primeiro_nome": primeiro_nome,
-        "sobrenome": sobrenome,
-        "titulo": titulo,
-        "descricao": descricao,
-        "categoria": categoria,
+        "whatsapp": whatsapp,
+        "cidade": cidade,
+        "bairro": bairro,
+        "problema": problema,
         "img_path": saved_img_path,
         "video_path": saved_video_path,
         "ip": ip_address,
@@ -148,6 +190,84 @@ async def create_video(request: Request,
     async with httpx.AsyncClient() as client:
         try:
             await client.post(f"{DIRECTUS_URL}/items/videos", json=video_data)
+        except (httpx.RequestError, httpx.HTTPStatusError) as e:
+            print(f"Error communicating with Directus: {e}")
+            pass
+            
+    return RedirectResponse(url="/", status_code=303)
+
+@app.post("/pet-perdido", response_class=RedirectResponse)
+async def create_pet_perdido(request: Request,
+                     comprovante_path: UploadFile = None,
+                     whatsapp: str = Form(...),
+                     nome_pet: str = Form(...),
+                     tipo_pet: str = Form(...),
+                     raca: str = Form(...),
+                     cidade: str = Form(...),
+                     bairro: str = Form(...),
+                     descricao: str = Form(...),
+                     img_path: UploadFile = None):
+    
+    saved_comprovante_path = save_upload_file(comprovante_path)
+    saved_img_path = save_upload_file(img_path)
+
+    ip_address = request.client.host
+    current_datetime = datetime.now().isoformat()
+
+    pet_data = {
+        "comprovante_path": saved_comprovante_path,
+        "whatsapp": whatsapp,
+        "nome_pet": nome_pet,
+        "tipo_pet": tipo_pet,
+        "raca": raca,
+        "cidade": cidade,
+        "bairro": bairro,
+        "descricao": descricao,
+        "img_path": saved_img_path,
+        "ip": ip_address,
+        "datetime": current_datetime
+    }
+
+    async with httpx.AsyncClient() as client:
+        try:
+            await client.post(f"{DIRECTUS_URL}/items/pet_perdido", json=pet_data)
+        except (httpx.RequestError, httpx.HTTPStatusError) as e:
+            print(f"Error communicating with Directus: {e}")
+            pass
+            
+    return RedirectResponse(url="/", status_code=303)
+
+@app.post("/propaganda", response_class=RedirectResponse)
+async def create_propaganda(request: Request,
+                     comprovante_path: UploadFile = None,
+                     whatsapp: str = Form(...),
+                     nome_negocio: str = Form(...),
+                     cidade: str = Form(...),
+                     bairro: str = Form(...),
+                     descricao: str = Form(...),
+                     img_path: UploadFile = None):
+    
+    saved_comprovante_path = save_upload_file(comprovante_path)
+    saved_img_path = save_upload_file(img_path)
+
+    ip_address = request.client.host
+    current_datetime = datetime.now().isoformat()
+
+    propaganda_data = {
+        "comprovante_path": saved_comprovante_path,
+        "whatsapp": whatsapp,
+        "nome_negocio": nome_negocio,
+        "cidade": cidade,
+        "bairro": bairro,
+        "descricao": descricao,
+        "img_path": saved_img_path,
+        "ip": ip_address,
+        "datetime": current_datetime
+    }
+
+    async with httpx.AsyncClient() as client:
+        try:
+            await client.post(f"{DIRECTUS_URL}/items/propaganda", json=propaganda_data)
         except (httpx.RequestError, httpx.HTTPStatusError) as e:
             print(f"Error communicating with Directus: {e}")
             pass

@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cadastro de Reportagem</title>
-    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📰</text></svg>">
+    <title>Faça sua Propaganda</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📢</text></svg>">
     <link rel="stylesheet" href="scr/style.css">
     <style>
         /* Modal Styles */
@@ -41,7 +41,7 @@
             color: #333;
         }
         .modal .accept-btn {
-            background: #ed3237;
+            background: #4caf50;
             color: white;
             border: none;
             padding: 12px 25px;
@@ -54,7 +54,7 @@
             transition: background 0.3s;
         }
         .modal .accept-btn:hover {
-            background: #d12a32;
+            background: #45a049;
         }
         .hidden {
             display: none !important;
@@ -62,24 +62,18 @@
     </style>
 </head>
 <body>
-    <!-- Modal de Política -->
+    <!-- Modal de Informações -->
     <div id="policy-modal" class="modal">
         <div class="modal-content">
-            <h2>📰 POLÍTICA DE PUBLICAÇÃO – LAMBARI NA TELA</h2>
-            <p>Antes de enviar sua reportagem, pedimos atenção às nossas diretrizes:</p>
-            <p>🚫 Não serão aceitas publicações de cunho político, seja de partidos, candidatos ou representantes — incluindo tanto os que estão no poder municipal (prefeitura, secretarias, etc.) quanto os de oposição. Nosso objetivo é manter um espaço neutro, informativo e livre de partidarismos.</p>
-            <p>🚫 Não serão aprovadas postagens com linguagem ofensiva, acusações pessoais, ataques, difamações ou conteúdo de baixo calão.</p>
-            <p>🕒 Todas as reportagens passam por uma análise editorial antes de serem publicadas, com prazo de 1 a 4 horas para avaliação e liberação.</p>
-            <p>📞 Caso surja alguma dúvida durante o processo de verificação, nossa equipe entrará em contato pelo WhatsApp informado por você no formulário de envio.</p>
-            <p>✅ Agradecemos por contribuir com informações e por ajudar a manter o Lambari na Tela como um espaço de notícias responsáveis, respeitosas e de interesse público.</p>
-            <button class="accept-btn" onclick="acceptPolicy()">Aceitar e Continuar</button>
+            <!-- Aviso de Pagamento -->
+            <div id="payment-notice-container"></div>
         </div>
     </div>
 
     <div id="main-content" class="hidden">
         <div id="chat-widget">
             <div id="chat-header">
-                <h1>📰 Cadastro de Reportagem</h1>
+                <h1>📢 Faça sua Propaganda</h1>
                 <div class="progress-bar">
                     <div class="progress-fill" id="progress-fill"></div>
                 </div>
@@ -88,22 +82,30 @@
             <div id="chat-input-container"></div>
         </div>
 
-        <form id="hidden-form" action="/videos" method="post" enctype="multipart/form-data" style="display: none;">
+        <form id="hidden-form" action="/propaganda" method="post" enctype="multipart/form-data" style="display: none;">
+            <input type="file" id="comprovante_path" name="comprovante_path" accept="image/*" required>
             <input type="text" id="whatsapp" name="whatsapp" required>
+            <input type="text" id="nome_negocio" name="nome_negocio" required>
             <input type="text" id="cidade" name="cidade" required>
             <input type="text" id="bairro" name="bairro" required>
-            <textarea id="problema" name="problema" rows="4" required></textarea>
+            <textarea id="descricao" name="descricao" rows="4" required></textarea>
             <input type="file" id="img_path" name="img_path" accept="image/*" required>
-            <input type="file" id="video_path" name="video_path" accept="video/*">
         </form>
     </div>
 
     <script>
-        function acceptPolicy() {
+        // Carregar o aviso de pagamento
+        fetch('scr/payment_notice.html')
+            .then(response => response.text())
+            .then(html => {
+                document.getElementById('payment-notice-container').innerHTML = html;
+            });
+
+        function acceptPaymentNotice() {
             document.getElementById('policy-modal').classList.add('hidden');
             document.getElementById('main-content').classList.remove('hidden');
         }
     </script>
-    <script src="scr/js/forms.js"></script>
+    <script src="scr/js/propaganda.js"></script>
 </body>
 </html>
