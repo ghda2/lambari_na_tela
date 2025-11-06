@@ -1,0 +1,65 @@
+<div class="policy-notice">
+    <h2>📰 POLÍTICA DE PUBLICAÇÃO – LAMBARI NA TELA</h2>
+    <p>Antes de enviar sua reportagem, pedimos atenção às nossas diretrizes:</p>
+    <p>🚫 Não serão aceitas publicações de cunho político, seja de partidos, candidatos ou representantes — incluindo tanto os que estão no poder municipal (prefeitura, secretarias, etc.) quanto os de oposição. Nosso objetivo é manter um espaço neutro, informativo e livre de partidarismos.</p>
+    <p>🚫 Não serão aprovadas postagens com linguagem ofensiva, acusações pessoais, ataques, difamações ou conteúdo de baixo calão.</p>
+    <p>🕒 Todas as reportagens passam por uma análise editorial antes de serem publicadas, com prazo de 1 a 4 horas para avaliação e liberação.</p>
+    <p>📞 Caso surja alguma dúvida durante o processo de verificação, nossa equipe entrará em contato pelo WhatsApp informado por você no formulário de envio.</p>
+    <p>✅ Agradecemos por contribuir com informações e por ajudar a manter o Lambari na Tela como um espaço de notícias responsáveis, respeitosas e de interesse público.</p>
+    <button class="accept-btn" onclick="acceptPolicy()">Aceitar e Continuar</button>
+</div>
+
+<style>
+    .policy-notice {
+        background: white;
+        padding: 25px;
+        border-radius: 10px;
+        max-width: 700px;
+        margin: 0 auto;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    }
+
+    .policy-notice h2 {
+        color: #2d2c44;
+        font-size: 1.5rem;
+        margin-bottom: 15px;
+        text-align: center;
+    }
+
+    .policy-notice p {
+        line-height: 1.6;
+        margin-bottom: 10px;
+        color: #333;
+    }
+
+    .policy-notice .accept-btn {
+        background: #ed3237;
+        color: white;
+        border: none;
+        padding: 12px 25px;
+        border-radius: 25px;
+        font-size: 1rem;
+        cursor: pointer;
+        margin-top: 20px;
+        display: block;
+        width: 100%;
+        transition: background 0.3s;
+    }
+
+    .policy-notice .accept-btn:hover {
+        background: #d12a32;
+    }
+
+    @media (max-width: 600px) {
+        .policy-notice {
+            padding: 15px;
+        }
+    }
+</style>
+
+<script>
+    function acceptPolicy() {
+        document.getElementById('policy-modal').classList.add('hidden');
+        document.getElementById('main-content').classList.remove('hidden');
+    }
+</script>

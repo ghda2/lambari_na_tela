@@ -21,14 +21,8 @@
     <!-- Modal de Política -->
     <div id="policy-modal" class="modal">
         <div class="modal-content">
-            <h2>📰 POLÍTICA DE PUBLICAÇÃO – LAMBARI NA TELA</h2>
-            <p>Antes de enviar sua reportagem, pedimos atenção às nossas diretrizes:</p>
-            <p>🚫 Não serão aceitas publicações de cunho político, seja de partidos, candidatos ou representantes — incluindo tanto os que estão no poder municipal (prefeitura, secretarias, etc.) quanto os de oposição. Nosso objetivo é manter um espaço neutro, informativo e livre de partidarismos.</p>
-            <p>🚫 Não serão aprovadas postagens com linguagem ofensiva, acusações pessoais, ataques, difamações ou conteúdo de baixo calão.</p>
-            <p>🕒 Todas as reportagens passam por uma análise editorial antes de serem publicadas, com prazo de 1 a 4 horas para avaliação e liberação.</p>
-            <p>📞 Caso surja alguma dúvida durante o processo de verificação, nossa equipe entrará em contato pelo WhatsApp informado por você no formulário de envio.</p>
-            <p>✅ Agradecemos por contribuir com informações e por ajudar a manter o Lambari na Tela como um espaço de notícias responsáveis, respeitosas e de interesse público.</p>
-            <button class="accept-btn" onclick="acceptPolicy()">Aceitar e Continuar</button>
+            <!-- Política de Publicação -->
+            <div id="policy-notice-container"></div>
         </div>
     </div>
 
@@ -55,10 +49,12 @@
     </div>
 
     <script>
-        function acceptPolicy() {
-            document.getElementById('policy-modal').classList.add('hidden');
-            document.getElementById('main-content').classList.remove('hidden');
-        }
+        // Carregar a política de publicação
+        fetch('scr/policy_modal.html')
+            .then(response => response.text())
+            .then(html => {
+                document.getElementById('policy-notice-container').innerHTML = html;
+            });
     </script>
     <script src="scr/js/forms.js"></script>
 </body>
