@@ -8,7 +8,7 @@ from datetime import datetime, timedelta
 from typing import Optional
 from jose import JWTError, jwt
 from passlib.context import CryptContext
-from file_handler import save_upload_file
+from .file_handler import save_upload_file
 
 # --- Configuration ---
 SECRET_KEY = os.environ.get("SECRET_KEY", os.urandom(24).hex())
