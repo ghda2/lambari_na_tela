@@ -1,12 +1,9 @@
-<!DOCTYPE html>
-<html lang="pt-BR">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Anunciar Pet Perdido</title>
+{% extends "base.html" %}
+
+{% block title %}Anunciar Pet Perdido{% endblock %}
+
+{% block head %}
     <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🐾</text></svg>">
-    <link rel="stylesheet" href="scr/style.css">
-    <link rel="stylesheet" href="scr/form.css">
     <style>
         /* Form-specific overrides */
         .modal .accept-btn {
@@ -16,8 +13,9 @@
             background: #e68900;
         }
     </style>
-</head>
-<body>
+{% endblock %}
+
+{% block content %}
     <!-- Modal de Informações -->
     <div id="policy-modal" class="modal">
         <div class="modal-content">
@@ -38,38 +36,35 @@
             <div id="chat-input-container"></div>
         </div>
 
+        <!-- Hidden form to collect data - this gets populated by the chat interface -->
         <form id="hidden-form" action="/pet-perdido" method="post" enctype="multipart/form-data" style="display: none;">
-            <input type="file" id="comprovante" name="comprovante" accept="image/*" multiple required>
-            <input type="text" id="nome_animal" name="nome_animal" required>
-            <input type="text" id="especie_raca" name="especie_raca" required>
-            <input type="text" id="sexo" name="sexo" required>
-            <input type="text" id="idade" name="idade" required>
-            <textarea id="cor_caracteristicas" name="cor_caracteristicas" rows="4" required></textarea>
-            <input type="text" id="data_horario" name="data_horario" required>
-            <textarea id="local_desaparecimento" name="local_desaparecimento" rows="4" required></textarea>
-            <textarea id="comportamento" name="comportamento" rows="4" required></textarea>
-            <input type="text" id="acessorios" name="acessorios" required>
-            <input type="text" id="nome_tutor" name="nome_tutor" required>
-            <input type="text" id="telefone_whatsapp" name="telefone_whatsapp" required>
-            <input type="text" id="recompensa" name="recompensa" required>
-            <input type="text" id="cidade" name="cidade" required>
-            <input type="file" id="fotos" name="fotos" accept="image/*" multiple required>
+            <input type="file" id="comprovante_path" name="comprovante_path" accept="image/*" multiple>
+            <input type="text" id="nome_pet" name="nome_pet">
+            <input type="text" id="tipo_pet" name="tipo_pet">
+            <input type="text" id="raca" name="raca">
+            <input type="text" id="bairro" name="bairro">
+            <textarea id="descricao" name="descricao" rows="4"></textarea>
+            <input type="text" id="cidade" name="cidade">
+            <input type="text" id="whatsapp" name="whatsapp">
+            <input type="file" id="img_path" name="img_path" accept="image/*" multiple>
         </form>
     </div>
+{% endblock %}
 
+{% block scripts %}
     <script>
-        // Carregar o aviso de pagamento
-        fetch('scr/payment_notice.html')
-            .then(response => response.text())
-            .then(html => {
-                document.getElementById('payment-notice-container').innerHTML = html;
-            });
-
+        // Função global para aceitar o aviso de pagamento
         function acceptPaymentNotice() {
             document.getElementById('policy-modal').classList.add('hidden');
             document.getElementById('main-content').classList.remove('hidden');
         }
+
+        // Carregar o aviso de pagamento
+        fetch('{{ url_for("static", filename="html/payment_notice.html") }}')
+            .then(response => response.text())
+            .then(html => {
+                document.getElementById('payment-notice-container').innerHTML = html;
+            });
     </script>
-    <script src="scr/js/pet_perdido.js"></script>
-</body>
-</html>
+    <script src="{{ url_for('static', filename='js/pet_perdido.js') }}"></script>
+{% endblock %}

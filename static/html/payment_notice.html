@@ -30,7 +30,7 @@
         <p>⏱️ Seu anúncio será analisado e publicado em até <strong>1 a 4 horas</strong> após a confirmação do pagamento.</p>
     </div>
 
-    <button class="continue-btn" onclick="acceptPaymentNotice()">✅ Já tenho o comprovante, continuar para o chat</button>
+    <button class="accept-btn" onclick="acceptPaymentNotice()">✅ Já tenho o comprovante, continuar para o chat</button>
 </div>
 
 <style>
@@ -152,23 +152,22 @@
         border-left: 4px solid #4caf50;
     }
 
-    .continue-btn {
-        background: #4caf50;
+    .payment-notice .accept-btn {
+        background: #ff9800;
         color: white;
         border: none;
-        padding: 15px 30px;
+        padding: 12px 25px;
         border-radius: 25px;
-        font-size: 1.1rem;
+        font-size: 1rem;
         cursor: pointer;
         margin-top: 20px;
         display: block;
         width: 100%;
         transition: background 0.3s;
-        font-weight: bold;
     }
 
-    .continue-btn:hover {
-        background: #45a049;
+    .payment-notice .accept-btn:hover {
+        background: #e68900;
     }
 
     @media (max-width: 600px) {
@@ -187,6 +186,11 @@
 </style>
 
 <script>
+    function acceptPaymentNotice() {
+        document.getElementById('policy-modal').classList.add('hidden');
+        document.getElementById('main-content').classList.remove('hidden');
+    }
+
     async function copyPixKey() {
         const pixKeyInput = document.getElementById('pix-key');
         const pixKey = pixKeyInput.value;

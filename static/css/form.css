@@ -219,6 +219,127 @@
     flex-wrap: wrap;
 }
 
+/* Botões de opção - Novo estilo integrado */
+.button-options-container {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    width: 100%;
+    margin: 15px 0;
+}
+
+.button-option {
+    padding: 16px 20px;
+    border: 2px solid #5a5a7a;
+    border-radius: 10px;
+    background: linear-gradient(135deg, #3a3a5a 0%, #2d2d45 100%);
+    color: #ffffff;
+    font-size: 0.95rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    text-align: left;
+    width: 100%;
+    box-sizing: border-box;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.button-option::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
+    transition: left 0.6s ease;
+}
+
+.button-option:hover {
+    border-color: #d61f1c;
+    background: linear-gradient(135deg, #4a4a6a 0%, #3a3a5a 100%);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 16px rgba(214, 31, 28, 0.2);
+}
+
+.button-option:hover::before {
+    left: 100%;
+}
+
+.button-option.selected {
+    border-color: #d61f1c;
+    background: linear-gradient(135deg, #d61f1c 0%, #b01a17 100%);
+    color: #ffffff;
+    font-weight: 600;
+    transform: translateY(-1px);
+    box-shadow: 0 6px 20px rgba(214, 31, 28, 0.4);
+}
+
+.button-option:focus {
+    outline: 2px solid #d61f1c;
+    outline-offset: 2px;
+}
+
+.button-option:active {
+    transform: translateY(0);
+    transition: transform 0.1s;
+}
+
+/* Responsividade para botões de opção */
+@media (min-width: 600px) {
+    .button-options-container {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 12px;
+    }
+    
+    .button-option {
+        text-align: center;
+        padding: 18px 16px;
+    }
+}
+
+@media (min-width: 900px) {
+    .button-options-container {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+/* Animação de seleção */
+@keyframes pulse {
+    0% { 
+        transform: scale(1); 
+    }
+    50% { 
+        transform: scale(1.02); 
+    }
+    100% { 
+        transform: scale(1); 
+    }
+}
+
+.button-option.selected {
+    animation: pulse 0.4s ease-in-out;
+}
+
+.button-option.selected::after {
+    content: '✓';
+    position: absolute;
+    right: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #ffffff;
+    font-weight: bold;
+    font-size: 1.2rem;
+    text-shadow: 0 1px 2px rgba(0,0,0,0.3);
+}
+
+/* Input styles - mantidos originais */
 #chat-input-container input[type="text"],
 #chat-input-container input[type="tel"],
 #chat-input-container input[type="file"],
@@ -415,5 +536,14 @@
         width: 95%;
         margin: 10% auto;
         padding: 15px;
+    }
+    
+    .button-options-container {
+        gap: 10px;
+    }
+    
+    .button-option {
+        padding: 14px 16px;
+        font-size: 0.9rem;
     }
 }

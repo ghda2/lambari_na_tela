@@ -1,10 +1,9 @@
-<!DOCTYPE html>
-<html lang="pt-BR">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Detalhes da Reportagem</title>
-    <link rel="stylesheet" href="/scr/admin.css">
+{% extends "base.html" %}
+
+{% block title %}Detalhes da Reportagem{% endblock %}
+
+{% block head %}
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/admin.css') }}">
     <style>
         .video-detail-container {
             max-width: 1200px;
@@ -190,8 +189,9 @@
             }
         }
     </style>
-</head>
-<body>
+{% endblock %}
+
+{% block content %}
     <div class="video-detail-container">
         <div class="detail-header">
             <h1>{{ video.titulo }}</h1>
@@ -276,7 +276,5 @@
             </div>
         </div>
     </div>
-</body>
-</html></content>
-    <filePath>c:\Users\gabri\Desktop\Lambari Na Tela\templates\video_detail.html</filePath>
+{% endblock %}
 </xai:function_call">...

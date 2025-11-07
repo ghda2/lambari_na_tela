@@ -1,12 +1,10 @@
-<!DOCTYPE html>
-<html lang="pt-BR">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Faça sua Propaganda</title>
+{% extends "base.html" %}
+
+{% block title %}Faça sua Propaganda{% endblock %}
+
+{% block head %}
     <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📢</text></svg>">
-    <link rel="stylesheet" href="scr/style.css">
-    <link rel="stylesheet" href="scr/form.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/form.css') }}">
     <style>
         /* Form-specific overrides */
         .modal .accept-btn {
@@ -16,8 +14,9 @@
             background: #45a049;
         }
     </style>
-</head>
-<body>
+{% endblock %}
+
+{% block content %}
     <!-- Modal de Informações -->
     <div id="policy-modal" class="modal">
         <div class="modal-content">
@@ -48,10 +47,12 @@
             <input type="file" id="img_path" name="img_path" accept="image/*" required>
         </form>
     </div>
+{% endblock %}
 
+{% block scripts %}
     <script>
         // Carregar o aviso de pagamento
-        fetch('scr/payment_notice.html')
+        fetch('{{ url_for("static", filename="html/payment_notice.html") }}')
             .then(response => response.text())
             .then(html => {
                 document.getElementById('payment-notice-container').innerHTML = html;
@@ -62,6 +63,5 @@
             document.getElementById('main-content').classList.remove('hidden');
         }
     </script>
-    <script src="scr/js/propaganda.js"></script>
-</body>
-</html>
+    <script src="{{ url_for('static', filename='js/propaganda.js') }}"></script>
+{% endblock %}

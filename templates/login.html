@@ -1,12 +1,12 @@
-<!DOCTYPE html>
-<html lang="pt-BR">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Login</title>
-    <link rel="stylesheet" href="scr/login.css">
-</head>
-<body>
+{% extends "base.html" %}
+
+{% block title %}Admin Login{% endblock %}
+
+{% block head %}
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/login.css') }}">
+{% endblock %}
+
+{% block content %}
     <div class="login-container">
         <div class="login-header">
             <h1>🔐 Admin Login</h1>
@@ -30,5 +30,4 @@
             <a href="/">← Voltar ao site</a>
         </div>
     </div>
-</body>
-</html>
+{% endblock %}

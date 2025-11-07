@@ -1,12 +1,10 @@
-<!DOCTYPE html>
-<html lang="pt-BR">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cadastro de Reportagem</title>
+{% extends "base.html" %}
+
+{% block title %}Cadastro de Reportagem{% endblock %}
+
+{% block head %}
     <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📰</text></svg>">
-    <link rel="stylesheet" href="scr/style.css">
-    <link rel="stylesheet" href="scr/form.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/form.css') }}">
     <style>
         /* Form-specific overrides */
         .modal .accept-btn {
@@ -16,8 +14,9 @@
             background: #d12a32;
         }
     </style>
-</head>
-<body>
+{% endblock %}
+
+{% block content %}
     <!-- Modal de Política -->
     <div id="policy-modal" class="modal">
         <div class="modal-content">
@@ -47,15 +46,16 @@
             <input type="file" id="video_path" name="video_path" accept="video/*">
         </form>
     </div>
+{% endblock %}
 
+{% block scripts %}
     <script>
         // Carregar a política de publicação
-        fetch('scr/policy_modal.html')
+        fetch('{{ url_for("static", filename="html/policy_modal.html") }}')
             .then(response => response.text())
             .then(html => {
                 document.getElementById('policy-notice-container').innerHTML = html;
             });
     </script>
-    <script src="scr/js/forms.js"></script>
-</body>
-</html>
+    <script src="{{ url_for('static', filename='js/forms.js') }}"></script>
+{% endblock %}

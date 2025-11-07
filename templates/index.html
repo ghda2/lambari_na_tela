@@ -1,10 +1,8 @@
-<!DOCTYPE html>
-<html lang="pt-BR">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Lambari NA TELA - Link na Bio</title>
-    <link rel="stylesheet" href="scr/style.css">
+{% extends "base.html" %}
+
+{% block title %}Lambari NA TELA - Link na Bio{% endblock %}
+
+{% block head %}
     <style>
         body {
             font-family: 'Arial', sans-serif;
@@ -150,8 +148,9 @@
             }
         }
     </style>
-</head>
-<body>
+{% endblock %}
+
+{% block content %}
     <div class="container">
         <img src="/uploads/lambari_na_tela_logo.svg" alt="Lambari na Tela Logo" class="logo">
         <h1>Lambari NA TELA</h1>
@@ -174,6 +173,9 @@
             </div>
         </div>
     </div>
+{% endblock %}
+
+{% block scripts %}
     <script>
         async function fetchWeather() {
             try {
@@ -232,5 +234,4 @@
 
         fetchWeather();
     </script>
-</body>
-</html>
+{% endblock %}
