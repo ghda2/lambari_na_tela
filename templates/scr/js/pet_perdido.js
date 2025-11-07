@@ -120,14 +120,23 @@
                 fileInput.id = "chat-input-field";
                 fileInput.accept = question.accept;
                 fileInput.multiple = question.multiple || false;
+
+                const fileSendBtn = document.createElement("button");
+                fileSendBtn.id = "chat-send-btn";
+                fileSendBtn.textContent = "Enviar";
+
                 inputContainer.appendChild(fileInput);
+                inputContainer.appendChild(fileSendBtn);
+
                 fileInput.addEventListener("change", (e) => {
                     if (e.target.files.length > 0) {
                         const files = Array.from(e.target.files);
                         const displayText = files.map(f => f.name).join(', ');
-                        handleUserInput(files, ` ${displayText}`);
+                        handleUserInput(files, `📎 ${displayText}`);
                     }
                 });
+
+                fileSendBtn.addEventListener("click", () => handleUserInput());
                 break;
         }
     }
