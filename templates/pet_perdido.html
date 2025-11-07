@@ -39,15 +39,21 @@
         </div>
 
         <form id="hidden-form" action="/pet-perdido" method="post" enctype="multipart/form-data" style="display: none;">
-            <input type="file" id="comprovante_path" name="comprovante_path" accept="image/*" required>
-            <input type="text" id="whatsapp" name="whatsapp" required>
-            <input type="text" id="nome_pet" name="nome_pet" required>
-            <input type="text" id="tipo_pet" name="tipo_pet" required>
-            <input type="text" id="raca" name="raca" required>
+            <input type="file" id="comprovante" name="comprovante" accept="image/*" multiple required>
+            <input type="text" id="nome_animal" name="nome_animal" required>
+            <input type="text" id="especie_raca" name="especie_raca" required>
+            <input type="text" id="sexo" name="sexo" required>
+            <input type="text" id="idade" name="idade" required>
+            <textarea id="cor_caracteristicas" name="cor_caracteristicas" rows="4" required></textarea>
+            <input type="text" id="data_horario" name="data_horario" required>
+            <textarea id="local_desaparecimento" name="local_desaparecimento" rows="4" required></textarea>
+            <textarea id="comportamento" name="comportamento" rows="4" required></textarea>
+            <input type="text" id="acessorios" name="acessorios" required>
+            <input type="text" id="nome_tutor" name="nome_tutor" required>
+            <input type="text" id="telefone_whatsapp" name="telefone_whatsapp" required>
+            <input type="text" id="recompensa" name="recompensa" required>
             <input type="text" id="cidade" name="cidade" required>
-            <input type="text" id="bairro" name="bairro" required>
-            <textarea id="descricao" name="descricao" rows="4" required></textarea>
-            <input type="file" id="img_path" name="img_path" accept="image/*" required>
+            <input type="file" id="fotos" name="fotos" accept="image/*" multiple required>
         </form>
     </div>
 
