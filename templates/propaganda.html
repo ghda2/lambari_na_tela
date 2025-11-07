@@ -51,7 +51,7 @@
 {% block scripts %}
     <script>
         // Carregar o aviso de pagamento
-        fetch('{{ url_for("static", filename="html/payment_notice.html") }}')
+        fetch('{{ static_url_for(request, "html/payment_notice.html") }}')
             .then(response => response.text())
             .then(html => {
                 document.getElementById('payment-notice-container').innerHTML = html;
@@ -62,5 +62,5 @@
             document.getElementById('main-content').classList.remove('hidden');
         }
     </script>
-    <script src="{{ url_for('static', filename='js/propaganda.js') }}"></script>
+    <script src="{{ static_url_for(request, 'js/propaganda.js') }}"></script>
 {% endblock %}

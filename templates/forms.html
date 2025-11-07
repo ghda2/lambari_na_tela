@@ -50,11 +50,11 @@
 {% block scripts %}
     <script>
         // Carregar a política de publicação
-        fetch('{{ url_for("static", filename="html/policy_modal.html") }}')
+        fetch('{{ static_url_for(request, "html/policy_modal.html") }}')
             .then(response => response.text())
             .then(html => {
                 document.getElementById('policy-notice-container').innerHTML = html;
             });
     </script>
-    <script src="{{ url_for('static', filename='js/forms.js') }}"></script>
+    <script src="{{ static_url_for(request, 'js/forms.js') }}"></script>
 {% endblock %}

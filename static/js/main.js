@@ -4,6 +4,9 @@ document.addEventListener("DOMContentLoaded", () => {
     const hiddenForm = document.getElementById("hidden-form");
     const progressFill = document.getElementById("progress-fill");
 
+    // Only run if all required elements exist (i.e., on form pages)
+    if (!chatMessages || !inputContainer || !hiddenForm || !progressFill) return;
+
     // Function to mask phone number
     function maskPhone(value) {
         value = value.replace(/\D/g, ''); // Remove non-digits

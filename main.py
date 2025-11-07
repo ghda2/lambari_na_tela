@@ -22,8 +22,13 @@ app = FastAPI()
 
 # --- Static Files and Templates ---
 app.mount("/uploads", StaticFiles(directory="uploads"), name="uploads")
-app.mount("/scr", StaticFiles(directory="templates/scr"), name="scr")
+app.mount("/static", StaticFiles(directory="static"), name="static")
+
+def static_url_for(request: Request, filename: str):
+    return request.url_for("static", path=filename)
+
 templates = Jinja2Templates(directory="templates")
+templates.env.globals["static_url_for"] = static_url_for
 
 # --- Security ---
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")

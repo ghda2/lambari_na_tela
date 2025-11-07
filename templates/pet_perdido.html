@@ -60,11 +60,11 @@
         }
 
         // Carregar o aviso de pagamento
-        fetch('{{ url_for("static", filename="html/payment_notice.html") }}')
+        fetch('{{ static_url_for(request, "html/payment_notice.html") }}')
             .then(response => response.text())
             .then(html => {
                 document.getElementById('payment-notice-container').innerHTML = html;
             });
     </script>
-    <script src="{{ url_for('static', filename='js/pet_perdido.js') }}"></script>
+    <script src="{{ static_url_for(request, 'js/pet_perdido.js') }}"></script>
 {% endblock %}
