@@ -314,3 +314,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
     setTimeout(showQuestion, 500);
 });
+
+function acceptPolicy() {
+    document.getElementById('policy-modal').classList.add('hidden');
+    document.getElementById('main-content').classList.remove('hidden');
+}
