@@ -1,7 +1,19 @@
 async function fetchWeather() {
     try {
+        console.log('Tentando buscar dados do tempo...');
         const response = await fetch('https://api.open-meteo.com/v1/forecast?latitude=-23.3833&longitude=-50.1167&current_weather=true&hourly=temperature_2m,relative_humidity_2m,wind_speed_10m&timezone=America/Sao_Paulo');
+
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
         const data = await response.json();
+        console.log('Dados recebidos:', data);
+
+        if (!data.current_weather) {
+            throw new Error('Dados de tempo atual não encontrados');
+        }
+
         const current = data.current_weather;
         const temperature = current.temperature;
         const windSpeed = current.windspeed;
@@ -45,11 +57,16 @@ async function fetchWeather() {
         document.getElementById('temperature').textContent = `Temperatura: ${temperature}°C`;
         document.getElementById('description').textContent = `Condição: ${weather.desc}`;
         document.getElementById('wind').textContent = `Vento: ${windSpeed} km/h`;
+
+        console.log('Previsão do tempo atualizada com sucesso');
     } catch (error) {
         console.error('Erro ao buscar previsão:', error);
         document.getElementById('temperature').textContent = 'Erro ao carregar';
         document.getElementById('description').textContent = 'Tente novamente mais tarde';
         document.getElementById('wind').textContent = '';
+
+        // Tentar novamente em 30 segundos
+        setTimeout(fetchWeather, 30000);
     }
 }
 

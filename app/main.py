@@ -87,6 +87,7 @@ async def setup_directus():
             collections = [
                 {"collection": "videos", "schema": {"name": "videos"}},
                 {"collection": "pet_perdido", "schema": {"name": "pet_perdido"}},
+                {"collection": "objeto_perdido", "schema": {"name": "objeto_perdido"}},
                 {"collection": "propaganda", "schema": {"name": "propaganda"}}
             ]
             
@@ -125,6 +126,25 @@ async def setup_directus():
 
             for field in pet_perdido_fields:
                 await client.post(f"{DIRECTUS_URL}/fields/pet_perdido", headers=headers, json=field)
+
+            # 4. Create Fields for objeto_perdido collection
+            objeto_perdido_fields = [
+                {"field": "nome_responsavel", "type": "string"},
+                {"field": "objeto_perdido", "type": "string"},
+                {"field": "descricao_detalhada", "type": "text"},
+                {"field": "data_horario", "type": "string"},
+                {"field": "local_perdido", "type": "text"},
+                {"field": "possibilidade_levado", "type": "text"},
+                {"field": "nome_telefone_contato", "type": "string"},
+                {"field": "recompensa", "type": "string"},
+                {"field": "observacao", "type": "text"},
+                {"field": "fotos", "type": "string"},
+                {"field": "ip", "type": "string"},
+                {"field": "datetime", "type": "datetime"}
+            ]
+
+            for field in objeto_perdido_fields:
+                await client.post(f"{DIRECTUS_URL}/fields/objeto_perdido", headers=headers, json=field)
 
             # 5. Create Fields for propaganda collection
             propaganda_fields = [
@@ -171,6 +191,14 @@ async def forms_page(request: Request):
 async def pet_perdido_page(request: Request):
     return templates.TemplateResponse("pet_perdido.html", {"request": request})
 
+@app.get("/objeto-perdido", response_class=HTMLResponse)
+async def objeto_perdido_page(request: Request):
+    return templates.TemplateResponse("objeto_perdido.html", {"request": request})
+
+@app.get("/thank-you", response_class=HTMLResponse)
+async def thank_you_page(request: Request):
+    return templates.TemplateResponse("thank_you.html", {"request": request})
+
 @app.get("/propaganda", response_class=HTMLResponse)
 async def propaganda_page(request: Request):
     return templates.TemplateResponse("propaganda.html", {"request": request})
@@ -208,7 +236,7 @@ async def create_video(request: Request,
             print(f"Error communicating with Directus: {e}")
             pass
             
-    return RedirectResponse(url="/", status_code=303)
+    return RedirectResponse(url="/thank-you", status_code=303)
 
 @app.post("/pet-perdido", response_class=RedirectResponse)
 async def create_pet_perdido(request: Request,
@@ -249,7 +277,49 @@ async def create_pet_perdido(request: Request,
             print(f"Error communicating with Directus: {e}")
             pass
             
-    return RedirectResponse(url="/", status_code=303)
+    return RedirectResponse(url="/thank-you", status_code=303)
+
+@app.post("/objeto-perdido", response_class=RedirectResponse)
+async def create_objeto_perdido(request: Request,
+                     nome_responsavel: str = Form(...),
+                     objeto_perdido: str = Form(...),
+                     descricao_detalhada: str = Form(...),
+                     data_horario: str = Form(...),
+                     local_perdido: str = Form(...),
+                     possibilidade_levado: str = Form(...),
+                     nome_telefone_contato: str = Form(...),
+                     recompensa: str = Form(...),
+                     observacao: str = Form(""),
+                     fotos: UploadFile = File(None)):
+    
+    saved_fotos_path = save_upload_file(fotos)
+
+    ip_address = request.client.host
+    current_datetime = datetime.now().isoformat()
+
+    objeto_data = {
+        "nome_responsavel": nome_responsavel,
+        "objeto_perdido": objeto_perdido,
+        "descricao_detalhada": descricao_detalhada,
+        "data_horario": data_horario,
+        "local_perdido": local_perdido,
+        "possibilidade_levado": possibilidade_levado,
+        "nome_telefone_contato": nome_telefone_contato,
+        "recompensa": recompensa,
+        "observacao": observacao,
+        "fotos": saved_fotos_path,
+        "ip": ip_address,
+        "datetime": current_datetime
+    }
+
+    async with httpx.AsyncClient() as client:
+        try:
+            await client.post(f"{DIRECTUS_URL}/items/objeto_perdido", json=objeto_data)
+        except (httpx.RequestError, httpx.HTTPStatusError) as e:
+            print(f"Error communicating with Directus: {e}")
+            pass
+            
+    return RedirectResponse(url="/thank-you", status_code=303)
 
 @app.post("/propaganda", response_class=RedirectResponse)
 async def create_propaganda(request: Request,
@@ -308,7 +378,7 @@ async def create_propaganda(request: Request,
             print(f"Error communicating with Directus: {e}")
             pass
             
-    return RedirectResponse(url="/", status_code=303)
+    return RedirectResponse(url="/thank-you", status_code=303)
 
 # --- Admin Panel ---
 @app.get("/login", response_class=HTMLResponse)
