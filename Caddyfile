@@ -1,3 +1,12 @@
 :80 {
-    reverse_proxy fastapi:8000
+    @admin {
+        path /admin*
+    }
+    handle @admin {
+        uri strip_prefix /admin
+        reverse_proxy directus:8055
+    }
+    handle {
+        reverse_proxy fastapi:8000
+    }
 }

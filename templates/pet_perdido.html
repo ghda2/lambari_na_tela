@@ -3,6 +3,7 @@
 {% block title %}Anunciar Pet Perdido{% endblock %}
 
 {% block head %}
+    <link rel="stylesheet" href="/static/css/form.css">
     <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🐾</text></svg>">
     <style>
         /* Form-specific overrides */
@@ -53,12 +54,6 @@
 
 {% block scripts %}
     <script>
-        // Função global para aceitar o aviso de pagamento
-        function acceptPaymentNotice() {
-            document.getElementById('policy-modal').classList.add('hidden');
-            document.getElementById('main-content').classList.remove('hidden');
-        }
-
         // Carregar o aviso de pagamento
         fetch('{{ static_url_for(request, "html/payment_notice.html") }}')
             .then(response => response.text())

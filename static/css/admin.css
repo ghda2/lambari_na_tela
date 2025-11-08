@@ -1,31 +1,4 @@
 /* Admin Panel Styles */
-:root {
-    --primary-color: #2d2d45;
-    --secondary-color: #3a3a5a;
-    --tertiary-color: #5a5a7a;
-    --accent-color: #d61f1c;
-    --success-color: #22c55e;
-    --warning-color: #f59e0b;
-    --white: #ffffff;
-    --light-gray: #f8f9fa;
-    --dark-gray: #555;
-    --border-color: #ddd;
-    --shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-}
-
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-}
-
-body {
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-    background: var(--light-gray);
-    color: var(--dark-gray);
-    line-height: 1.6;
-}
-
 .admin-container {
     max-width: 1400px;
     margin: 0 auto;
@@ -271,8 +244,8 @@ tr:hover {
     100% { transform: rotate(360deg); }
 }
 
-/* Modal for full description */
-.modal {
+/* Modal for full description (scoped to admin page) */
+.admin-container .modal {
     display: none;
     position: fixed;
     z-index: 1000;
@@ -283,7 +256,7 @@ tr:hover {
     background-color: rgba(0, 0, 0, 0.5);
 }
 
-.modal-content {
+.admin-container .modal-content {
     background-color: var(--white);
     margin: 10% auto;
     padding: 2em;
@@ -293,12 +266,12 @@ tr:hover {
     box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
 }
 
-.modal-content h3 {
+.admin-container .modal-content h3 {
     margin-bottom: 1em;
     color: var(--primary-color);
 }
 
-.close {
+.admin-container .close {
     color: #aaa;
     float: right;
     font-size: 28px;
@@ -306,7 +279,7 @@ tr:hover {
     cursor: pointer;
 }
 
-.close:hover {
+.admin-container .close:hover {
     color: var(--accent-color);
 }
 

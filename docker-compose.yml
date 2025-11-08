@@ -14,8 +14,6 @@ services:
   directus:
     image: directus/directus:latest
     container_name: lambari_directus
-    ports:
-      - "8055:8055"
     environment:
       KEY: ${DIRECTUS_KEY}
       SECRET: ${DIRECTUS_SECRET}
@@ -27,7 +25,7 @@ services:
       DB_PASSWORD: ${DB_PASSWORD}
       ADMIN_EMAIL: ${ADMIN_EMAIL}
       ADMIN_PASSWORD: ${ADMIN_PASSWORD}
-      PUBLIC_URL: "http://localhost:8055"
+      PUBLIC_URL: "https://lambarinatela.com.br/admin"
       WEBSOCKETS_ENABLED: "true"
     depends_on:
       - db
@@ -39,8 +37,7 @@ services:
   fastapi:
     build: .
     container_name: lambari_fastapi
-    ports:
-      - "8000:8000"
+    command: ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000", "--log-level", "info"]
     environment:
       SECRET_KEY: "your-secret-key-here"
       ADMIN_USERNAME: "admin"
@@ -55,7 +52,7 @@ services:
   setup:
     build: .
     container_name: lambari_setup
-    command: ["python", "setup_directus.py"]
+    command: ["python", "app/setup_directus.py"]
     environment:
       DIRECTUS_URL: "http://directus:8055"
       DIRECTUS_ADMIN_EMAIL: ${ADMIN_EMAIL}

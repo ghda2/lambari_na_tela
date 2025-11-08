@@ -1,44 +1,145 @@
 :root {
-    --primary-color: #2d2d45;
-    --secondary-color: #3a3a5a;
-    --tertiary-color: #5a5a7a;
-    --accent-color: #d61f1c;
-    --white: #ffffff;
-    --dark-gray: #555;
-    --danger: #d61f1c;
-    --success: #22c55e;
+    --bg-color: #121212;
+    --primary-color: #1DB954;
+    --secondary-color: #FFFFFF;
+    --text-color: #B3B3B3;
+    --card-bg-color: #181818;
+    --card-hover-bg-color: #282828;
+    --shadow-color: rgba(0, 0, 0, 0.2);
+    --font-family: 'Poppins', sans-serif;
 }
 
-/* Modal Styles */
-.modal {
+body {
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    font-family: var(--font-family);
+    margin: 0;
+    padding: 2rem;
     display: flex;
-    position: fixed;
-    top: 0;
-    left: 0;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+}
+
+.main-container {
+    max-width: 800px;
     width: 100%;
-    height: 100%;
-    background: rgba(0, 0, 0, 0.85);
-    z-index: 9999;
+    text-align: center;
+}
+
+.page-header {
+    margin-bottom: 3rem;
+    animation: fadeInDown 1s ease-in-out;
+}
+
+.logo {
+    width: 100px;
+    height: 100px;
+    margin: 0 auto 1.5rem;
+    border-radius: 50%;
+    box-shadow: 0 4px 15px var(--shadow-color);
+}
+
+.site-title {
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: var(--secondary-color);
+    margin-bottom: 0.5rem;
+}
+
+.site-subtitle {
+    font-size: 1.1rem;
+    font-weight: 300;
+    color: var(--text-color);
+}
+
+.services-section {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 3rem;
+}
+
+.service-card {
+    background-color: var(--card-bg-color);
+    border-radius: 10px;
+    padding: 2rem;
+    transition: background-color 0.3s, transform 0.3s;
+    box-shadow: 0 4px 15px var(--shadow-color);
+    animation: fadeInUp 1s ease-in-out;
+}
+
+.service-card:hover {
+    background-color: var(--card-hover-bg-color);
+    transform: translateY(-5px);
+}
+
+.service-card a {
+    text-decoration: none;
+    color: inherit;
+}
+
+.service-icon {
+    font-size: 2.5rem;
+    color: var(--primary-color);
+    margin-bottom: 1rem;
+}
+
+.service-title {
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: var(--secondary-color);
+    margin-bottom: 0.5rem;
+}
+
+.service-description {
+    font-size: 0.9rem;
+    color: var(--text-color);
+}
+
+.weather-section {
+    animation: fadeInUp 1s ease-in-out;
+}
+
+.weather-widget {
+    background-color: var(--card-bg-color);
+    border-radius: 10px;
+    padding: 2rem;
+    max-width: 400px;
+    margin: 0 auto;
+    box-shadow: 0 4px 15px var(--shadow-color);
+}
+
+.weather-header {
+    display: flex;
     align-items: center;
     justify-content: center;
-    padding: 20px;
-    overflow-y: auto;
+    margin-bottom: 1.5rem;
+    font-size: 1.5rem;
+    color: var(--secondary-color);
 }
 
-.modal.hidden {
-    display: none;
+.weather-header .fas {
+    margin-right: 1rem;
+    color: var(--primary-color);
 }
 
-.modal-content {
-    width: 100%;
-    max-width: 750px;
-    animation: modalSlideIn 0.4s ease-out;
+.weather-content {
+    font-size: 1rem;
+    color: var(--text-color);
 }
 
-@keyframes modalSlideIn {
+#temperature {
+    font-size: 2rem;
+    font-weight: 600;
+    color: var(--secondary-color);
+    margin-bottom: 0.5rem;
+}
+
+@keyframes fadeInDown {
     from {
         opacity: 0;
-        transform: translateY(-30px);
+        transform: translateY(-20px);
     }
     to {
         opacity: 1;
@@ -46,173 +147,13 @@
     }
 }
 
-.hidden {
-    display: none !important;
-}
-
-/* Index Page Styles */
-body {
-    font-family: 'Arial', sans-serif;
-    background: #2d2c44;
-    margin: 0;
-    padding: 0;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    min-height: 100vh;
-    color: #fff;
-}
-
-.container {
-    text-align: center;
-    background: rgba(255, 255, 255, 0.1);
-    padding: 2rem;
-    border-radius: 20px;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.3);
-    max-width: 400px;
-    width: 90%;
-    backdrop-filter: blur(10px);
-}
-
-.logo {
-    width: 120px;
-    height: 120px;
-    margin-bottom: 1rem;
-    border-radius: 50%;
-    object-fit: cover;
-}
-
-h1 {
-    font-size: 2rem;
-    margin-bottom: 0.5rem;
-    color: #fff;
-}
-
-p {
-    font-size: 1rem;
-    color: #ccc;
-    margin-bottom: 2rem;
-}
-
-.buttons {
-    display: flex;
-    flex-direction: column;
-    gap: 1rem;
-}
-
-.btn {
-    display: inline-block;
-    padding: 15px 30px;
-    text-decoration: none;
-    color: white;
-    border-radius: 50px;
-    font-size: 1.1rem;
-    font-weight: bold;
-    transition: all 0.3s ease;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.3);
-}
-
-.btn:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 6px 20px rgba(0,0,0,0.4);
-}
-
-.btn-denuncia {
-    background: #ed3237;
-}
-
-.btn-denuncia:hover {
-    background: #d12a32;
-}
-
-.btn-pet {
-    background: #ff9800;
-}
-
-.btn-pet:hover {
-    background: #e68900;
-}
-
-.btn-propaganda {
-    background: #4caf50;
-}
-
-.btn-propaganda:hover {
-    background: #45a049;
-}
-
-.btn-whatsapp {
-    background: #25d366;
-}
-
-.btn-whatsapp:hover {
-    background: #20ba5a;
-}
-
-.weather {
-    margin-top: 2rem;
-    padding: 1rem;
-    background: rgba(255, 255, 255, 0.1);
-    border-radius: 15px;
-    backdrop-filter: blur(10px);
-}
-
-.weather h2 {
-    font-size: 1.5rem;
-    margin-bottom: 1rem;
-    color: #fff;
-}
-
-.weather-info {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 1rem;
-}
-
-.weather-icon {
-    font-size: 3rem;
-}
-
-.weather-details {
-    text-align: left;
-}
-
-.weather-details p {
-    margin: 0.5rem 0;
-    color: #ccc;
-}
-
-@media (max-width: 600px) {
-    .container {
-        padding: 1.5rem;
-        max-width: 95%;
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
     }
-    .logo {
-        width: 100px;
-        height: 100px;
-    }
-    h1 {
-        font-size: 1.8rem;
-    }
-    p {
-        font-size: 0.9rem;
-    }
-    .btn {
-        padding: 12px 25px;
-        font-size: 1rem;
-    }
-    .weather h2 {
-        font-size: 1.3rem;
-    }
-    .weather-info {
-        flex-direction: column;
-        gap: 0.5rem;
-    }
-    .weather-details {
-        text-align: center;
-    }
-    .weather-icon {
-        font-size: 2.5rem;
+    to {
+        opacity: 1;
+        transform: translateY(0);
     }
 }

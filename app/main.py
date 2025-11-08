@@ -1,11 +1,11 @@
 import os
-from fastapi import FastAPI, Request, Form, HTTPException, UploadFile, Depends, Response
+from fastapi import FastAPI, Request, Form, HTTPException, UploadFile, Depends, Response, File
 from fastapi.responses import HTMLResponse, RedirectResponse, JSONResponse
 from fastapi.templating import Jinja2Templates
 from fastapi.staticfiles import StaticFiles
 import httpx
 from datetime import datetime, timedelta
-from typing import Optional
+from typing import Optional, List
 from jose import JWTError, jwt
 from passlib.context import CryptContext
 from .file_handler import save_upload_file
@@ -128,13 +128,22 @@ async def setup_directus():
 
             # 5. Create Fields for propaganda collection
             propaganda_fields = [
-                {"field": "comprovante_path", "type": "string"},
-                {"field": "whatsapp", "type": "string"},
-                {"field": "nome_negocio", "type": "string"},
-                {"field": "cidade", "type": "string"},
-                {"field": "bairro", "type": "string"},
-                {"field": "descricao", "type": "text"},
-                {"field": "img_path", "type": "string"},
+                {"field": "nome_empresa", "type": "string"},
+                {"field": "nome_responsavel", "type": "string"},
+                {"field": "telefone_contato_equipe", "type": "string"},
+                {"field": "telefone_empresa", "type": "string"},
+                {"field": "endereco", "type": "string"},
+                {"field": "tipo_negocio", "type": "string"},
+                {"field": "descricao_oferta", "type": "text"},
+                {"field": "formas_pagamento", "type": "string"},
+                {"field": "desconto_vista", "type": "string"},
+                {"field": "parcelas_cartao", "type": "string"},
+                {"field": "promocoes", "type": "text"},
+                {"field": "frase_destaque", "type": "string"},
+                {"field": "produto_destaque", "type": "string"},
+                {"field": "links_redes", "type": "string"},
+                {"field": "outras_informacoes", "type": "text"},
+                {"field": "materiais_divulgacao", "type": "json"},
                 {"field": "ip", "type": "string"},
                 {"field": "datetime", "type": "datetime"}
             ]
@@ -244,28 +253,50 @@ async def create_pet_perdido(request: Request,
 
 @app.post("/propaganda", response_class=RedirectResponse)
 async def create_propaganda(request: Request,
-                     comprovante_path: UploadFile = None,
-                     whatsapp: str = Form(...),
-                     nome_negocio: str = Form(...),
-                     cidade: str = Form(...),
-                     bairro: str = Form(...),
-                     descricao: str = Form(...),
-                     img_path: UploadFile = None):
+                     nome_empresa: str = Form(...),
+                     nome_responsavel: str = Form(...),
+                     telefone_contato_equipe: str = Form(...),
+                     telefone_empresa: str = Form(...),
+                     endereco: str = Form(...),
+                     tipo_negocio: str = Form(...),
+                     descricao_oferta: str = Form(...),
+                     formas_pagamento: str = Form(...),
+                     desconto_vista: str = Form(...),
+                     parcelas_cartao: str = Form(...),
+                     promocoes: str = Form(""),
+                     frase_destaque: str = Form(""),
+                     produto_destaque: str = Form(""),
+                     links_redes: str = Form(""),
+                     outras_informacoes: str = Form(""),
+                     materiais_divulgacao: List[UploadFile] = File(None)):
     
-    saved_comprovante_path = save_upload_file(comprovante_path)
-    saved_img_path = save_upload_file(img_path)
+    saved_materiais_paths = []
+    if materiais_divulgacao:
+        for file in materiais_divulgacao:
+            path = save_upload_file(file)
+            if path:
+                saved_materiais_paths.append(path)
 
     ip_address = request.client.host
     current_datetime = datetime.now().isoformat()
 
     propaganda_data = {
-        "comprovante_path": saved_comprovante_path,
-        "whatsapp": whatsapp,
-        "nome_negocio": nome_negocio,
-        "cidade": cidade,
-        "bairro": bairro,
-        "descricao": descricao,
-        "img_path": saved_img_path,
+        "nome_empresa": nome_empresa,
+        "nome_responsavel": nome_responsavel,
+        "telefone_contato_equipe": telefone_contato_equipe,
+        "telefone_empresa": telefone_empresa,
+        "endereco": endereco,
+        "tipo_negocio": tipo_negocio,
+        "descricao_oferta": descricao_oferta,
+        "formas_pagamento": formas_pagamento,
+        "desconto_vista": desconto_vista,
+        "parcelas_cartao": parcelas_cartao,
+        "promocoes": promocoes,
+        "frase_destaque": frase_destaque,
+        "produto_destaque": produto_destaque,
+        "links_redes": links_redes,
+        "outras_informacoes": outras_informacoes,
+        "materiais_divulgacao": saved_materiais_paths,
         "ip": ip_address,
         "datetime": current_datetime
     }

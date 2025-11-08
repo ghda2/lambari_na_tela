@@ -3,6 +3,7 @@
 {% block title %}Cadastro de Reportagem{% endblock %}
 
 {% block head %}
+    <link rel="stylesheet" href="/static/css/form.css">
     <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📰</text></svg>">
     <style>
         /* Form-specific overrides */
@@ -49,11 +50,16 @@
 
 {% block scripts %}
     <script>
-        // Carregar a política de publicação
+        // Carregar política e evitar tela em branco se falhar
         fetch('{{ static_url_for(request, "html/policy_modal.html") }}')
-            .then(response => response.text())
-            .then(html => {
-                document.getElementById('policy-notice-container').innerHTML = html;
+            .then(r => { if(!r.ok) throw new Error('Falha ao carregar política'); return r.text(); })
+            .then(html => { document.getElementById('policy-notice-container').innerHTML = html; })
+            .catch(err => {
+                console.error(err);
+                // Se não carregar, remove modal e mostra conteúdo principal
+                const modal = document.getElementById('policy-modal');
+                if (modal) modal.classList.add('hidden');
+                document.getElementById('main-content').classList.remove('hidden');
             });
     </script>
     <script src="{{ static_url_for(request, 'js/forms.js') }}"></script>

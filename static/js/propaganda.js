@@ -1,280 +1,54 @@
-document.addEventListener("DOMContentLoaded", () => {
-    const chatMessages = document.getElementById("chat-messages");
-    const inputContainer = document.getElementById("chat-input-container");
-    const hiddenForm = document.getElementById("hidden-form");
-    const progressFill = document.getElementById("progress-fill");
-
-    // Function to mask phone number
-    function maskPhone(value) {
-        value = value.replace(/\D/g, ''); // Remove non-digits
-        if (value.length <= 11) {
-            value = value.replace(/(\d{2})(\d)/, '($1) $2');
-            value = value.replace(/(\d{5})(\d)/, '$1-$2');
-        }
-        return value;
-    }
-
+document.addEventListener("chat:start", () => {
     const questions = [
-        { id: "comprovante_path", text: "📄 Anexe o comprovante de pagamento (imagem ou screenshot)", type: "file", accept: "image/*", required: true },
-        { id: "whatsapp", text: "Qual seu número de WhatsApp para contato?", type: "tel", required: true },
-        { id: "nome_negocio", text: "Qual o nome do seu negócio/serviço?", type: "text", required: true },
-        { id: "cidade", text: "Em qual cidade?", type: "text", required: true },
-        { id: "bairro", text: "Em qual bairro?", type: "text", required: true },
-        { id: "descricao", text: "Descreva seu produto/serviço (o que oferece, diferenciais, etc)", type: "textarea", required: true },
-        { id: "img_path", text: "Envie uma imagem do seu produto/serviço", type: "file", accept: "image/*", required: true }
+        { id: "nome_empresa", text: "1. Nome da empresa: (Exemplo: Madeireira do Levy, LLs Bistrô, Evandro Café Consulting...)", type: "text", required: true },
+        { id: "nome_responsavel", text: "2. Nome do responsável pelo anúncio: (Quem autoriza ou representa a empresa para esta divulgação. 👉 O nome não será utilizado na publicação — servirá apenas para contato, caso seja necessário.)", type: "text", required: true },
+        { id: "telefone_contato_equipe", text: "3. Telefone ou WhatsApp para contato com a equipe Lambari na Tela: (👉 Esse número será usado exclusivamente para contato interno, caso precisemos confirmar informações ou ajustar o conteúdo antes da publicação.)", type: "text", required: true },
+        { id: "telefone_empresa", text: "4. Telefone ou WhatsApp da empresa (para divulgação): (👉 Esse número será exibido na matéria para que os clientes possam entrar em contato diretamente com a empresa.)", type: "text", required: true },
+        { id: "endereco", text: "5. Endereço completo da empresa: (Rua, número, bairro e cidade)", type: "text", required: true },
+        { id: "tipo_negocio", text: "6. Tipo de negócio / segmento: (Exemplo: restaurante, loja de roupas, madeireira, consultoria, academia, etc.)", type: "text", required: true },
+        { id: "descricao_oferta", text: "7. Descreva brevemente o que a empresa oferece: (Produtos, serviços, diferenciais, o que a torna especial)", type: "textarea", required: true },
+        { id: "formas_pagamento", text: "8. Formas de pagamento aceitas: (Exemplo: dinheiro, Pix, cartão de crédito, débito, transferência, etc.)", type: "text", required: true },
+        { id: "desconto_vista", text: "9. A empresa oferece desconto no pagamento à vista? (Sim / Não — se sim, informe o percentual)", type: "text", required: true },
+        { id: "parcelas_cartao", text: "10. Em quantas vezes é possível parcelar no cartão? (Informe o número de parcelas e se há juros)", type: "text", required: true },
+        { id: "promocoes", text: "11. Há promoções ou ofertas especiais no momento? (Descreva brevemente)", type: "textarea", required: false },
+        { id: "frase_destaque", text: "12. Deseja incluir uma frase de destaque ou slogan da empresa? (Exemplo: \"Tradição e qualidade que você confia\")", type: "text", required: false },
+        { id: "produto_destaque", text: "13. Há algum produto ou serviço que você quer destacar na matéria? (Indique o principal foco da divulgação)", type: "text", required: false },
+        { id: "links_redes", text: "14. Deseja incluir links de redes sociais ou site? (Informe os links — Instagram, Facebook, site, etc.)", type: "text", required: false },
+        { id: "outras_informacoes", text: "15. Outras informações importantes que queira acrescentar: (Caso queira contar algo especial sobre a história da empresa, fundação, diferenciais, etc.)", type: "textarea", required: false },
+        { id: "materiais_divulgacao", text: "16. Envio de materiais para divulgação: 👉 Anexe agora as fotos da empresa (fachada, produtos ou equipe), ou vídeos de até 1 minuto — máximo de 4 arquivos. 👉 Se preferir, você também pode enviar um banner pronto da sua empresa para ser utilizado na publicação.", type: "file", accept: "image/*,video/*", multiple: true, maxFiles: 4, required: false }
     ];
 
-    let currentQuestionIndex = 0;
-    let isEditing = false;
-
-    function updateProgress() {
-        const progress = ((currentQuestionIndex) / questions.length) * 100;
-        progressFill.style.width = `${progress}%`;
-    }
-
-    function showTypingIndicator() {
-        const typingDiv = document.createElement("div");
-        typingDiv.classList.add("typing-indicator");
-        typingDiv.innerHTML = '<div class="typing-dot"></div><div class="typing-dot"></div><div class="typing-dot"></div>';
-        chatMessages.appendChild(typingDiv);
-        chatMessages.scrollTop = chatMessages.scrollHeight;
-        return typingDiv;
-    }
-
-    function addMessage(text, sender) {
-        const messageEl = document.createElement("div");
-        messageEl.classList.add("chat-message", `${sender}-message`);
-        messageEl.textContent = text;
-        chatMessages.appendChild(messageEl);
-        chatMessages.scrollTop = chatMessages.scrollHeight;
-    }
-
-    function addErrorMessage(text) {
-        const messageEl = document.createElement("div");
-        messageEl.classList.add("chat-message", "error-message");
-        messageEl.textContent = text;
-        chatMessages.appendChild(messageEl);
-        chatMessages.scrollTop = chatMessages.scrollHeight;
-    }
-
-    function showQuestion() {
-        if (currentQuestionIndex >= questions.length) {
-            showSummary();
-            return;
+    const summaryConfig = {
+        title: "✅ Informações recebidas! Vamos revisar:",
+        labels: {
+            nome_empresa: "Nome da Empresa",
+            nome_responsavel: "Nome do Responsável",
+            telefone_contato_equipe: "Telefone Contato Equipe",
+            telefone_empresa: "Telefone Empresa",
+            endereco: "Endereço",
+            tipo_negocio: "Tipo de Negócio",
+            descricao_oferta: "Descrição da Oferta",
+            formas_pagamento: "Formas de Pagamento",
+            desconto_vista: "Desconto à Vista",
+            parcelas_cartao: "Parcelas Cartão",
+            promocoes: "Promoções",
+            frase_destaque: "Frase de Destaque",
+            produto_destaque: "Produto Destaque",
+            links_redes: "Links Redes Sociais",
+            outras_informacoes: "Outras Informações",
+            materiais_divulgacao: "Materiais Divulgação"
         }
+    };
 
-        updateProgress();
-        const question = questions[currentQuestionIndex];
-        const typingIndicator = showTypingIndicator();
+    const submissionConfig = {
+        buttonText: "📢 Enviar Propaganda",
+        submittingText: "⏳ Enviando...",
+        successText: "📤 Enviando sua propaganda..."
+    };
 
-        setTimeout(() => {
-            typingIndicator.remove();
-            addMessage(question.text, "bot");
-            renderInput(question);
-        }, 800);
-    }
-
-    function renderInput(question) {
-        inputContainer.innerHTML = "";
-
-        switch (question.type) {
-            case "text":
-            case "textarea":
-            case "tel":
-                const inputEl = question.type === "text" ? document.createElement("input") : document.createElement("textarea");
-                if (question.type === "tel" || question.id === "whatsapp") {
-                    inputEl.type = "text";
-                    inputEl.inputMode = "numeric";
-                    inputEl.placeholder = "(11) 99999-9999";
-                } else {
-                    inputEl.type = question.type;
-                    inputEl.placeholder = "Digite sua resposta...";
-                }
-                inputEl.id = "chat-input-field";
-
-                const sendBtn = document.createElement("button");
-                sendBtn.id = "chat-send-btn";
-                sendBtn.textContent = "Enviar";
-
-                inputContainer.appendChild(inputEl);
-                inputContainer.appendChild(sendBtn);
-
-                if (question.id === "whatsapp") {
-                    inputEl.addEventListener("input", (e) => {
-                        e.target.value = maskPhone(e.target.value);
-                    });
-                }
-
-                sendBtn.addEventListener("click", () => handleUserInput());
-                inputEl.addEventListener("keypress", (e) => {
-                    if (e.key === "Enter" && (!e.shiftKey || question.type === "text")) {
-                        e.preventDefault();
-                        handleUserInput();
-                    }
-                });
-                inputEl.focus();
-                break;
-
-            case "file":
-                const fileInput = document.createElement("input");
-                fileInput.type = "file";
-                fileInput.id = "chat-input-field";
-                fileInput.accept = question.accept;
-
-                inputContainer.appendChild(fileInput);
-
-                fileInput.addEventListener("change", (e) => {
-                    if (e.target.files.length > 0) {
-                        handleUserInput(e.target.files[0], e.target.files[0].name);
-                    }
-                });
-                break;
-        }
-    }
-
-    function handleUserInput(predefinedValue = null, displayText = null) {
-        const question = questions[currentQuestionIndex];
-        let value;
-        let userMessageText;
-
-        if (predefinedValue !== null) {
-            value = predefinedValue;
-            userMessageText = displayText || value.name;
-        } else {
-            const inputField = document.getElementById("chat-input-field");
-            if (!inputField) {
-                console.error("Input field not found!");
-                return;
-            }
-            if (question.type === "file") {
-                value = inputField.files[0];
-                userMessageText = value ? `📎 ${value.name}` : "Nenhum arquivo selecionado";
-            } else {
-                value = inputField.value;
-                userMessageText = value;
-            }
-        }
-
-        if (question.required && (!value || (typeof value === 'string' && value.trim() === ""))) {
-            addErrorMessage("⚠️ Este campo é obrigatório. Por favor, forneça uma resposta.");
-            return;
-        }
-
-        if (question.id === "whatsapp" && typeof value === 'string') {
-            const digits = value.replace(/\D/g, '');
-            if (digits.length !== 11) {
-                addErrorMessage("⚠️ Por favor, insira um número de WhatsApp válido com 11 dígitos (DDD + 9 dígitos).");
-                return;
-            }
-        }
-
-        const hiddenInput = document.getElementById(question.id);
-        if (question.type === "file" && value) {
-            hiddenInput.files = document.getElementById("chat-input-field").files;
-        } else if (hiddenInput) {
-            hiddenInput.value = value || "";
-        }
-
-        addMessage(userMessageText, "user");
-        proceedToNext();
-    }
-
-    function proceedToNext() {
-        if (isEditing) {
-            isEditing = false;
-            currentQuestionIndex = questions.length;
-            setTimeout(showSummary, 500);
-        } else {
-            currentQuestionIndex++;
-            setTimeout(showQuestion, 500);
-        }
-    }
-
-    function editQuestion(indexToEdit) {
-        isEditing = true;
-        currentQuestionIndex = indexToEdit;
-
-        inputContainer.innerHTML = "";
-
-        const summaryMessages = document.querySelectorAll('.summary-message, .final-submit-container');
-        summaryMessages.forEach(msg => msg.remove());
-
-        const botMessages = document.querySelectorAll('.bot-message');
-        const lastBotMessage = botMessages[botMessages.length - 1];
-        if (lastBotMessage && lastBotMessage.textContent.startsWith("✅")) {
-            lastBotMessage.remove();
-        }
-
-        showQuestion();
-    }
-
-    function showSummary() {
-        updateProgress();
-        progressFill.style.width = '100%';
-
-        const typingIndicator = showTypingIndicator();
-        setTimeout(() => {
-            typingIndicator.remove();
-            addMessage("✅ Informações recebidas! Vamos revisar:", "bot");
-            inputContainer.innerHTML = "";
-
-            const summaryContainer = document.createElement('div');
-            summaryContainer.classList.add('chat-message', 'summary-message');
-
-            let summaryHtml = '<ul>';
-            questions.forEach((q, index) => {
-                const hiddenInput = document.getElementById(q.id);
-                let valueText = hiddenInput.value;
-
-                if (q.type === 'file') {
-                    valueText = hiddenInput.files.length > 0 ? `📎 ${hiddenInput.files[0].name}` : "Nenhum arquivo";
-                } else if (!valueText) {
-                    valueText = "Não preenchido";
-                }
-
-                let questionText = q.text.replace(/[📄📢]/g, "").trim();
-
-                summaryHtml += `
-                    <li>
-                        <div>
-                            <strong>${questionText.split('?')[0]}:</strong>
-                            ${valueText}
-                        </div>
-                        <button type="button" class="edit-btn" data-index="${index}">✏️ Editar</button>
-                    </li>
-                `;
-            });
-            summaryHtml += '</ul>';
-            summaryContainer.innerHTML = summaryHtml;
-            chatMessages.appendChild(summaryContainer);
-
-            summaryContainer.querySelectorAll('.edit-btn').forEach(btn => {
-                btn.addEventListener('click', (e) => {
-                    const targetButton = e.target.closest('.edit-btn');
-                    if (!targetButton) return;
-                    const index = parseInt(targetButton.dataset.index);
-                    editQuestion(index);
-                });
-            });
-
-            const submitContainer = document.createElement('div');
-            submitContainer.classList.add('final-submit-container');
-            const submitBtn = document.createElement("button");
-            submitBtn.textContent = "📢 Enviar Propaganda";
-            submitBtn.style.width = "100%";
-            submitContainer.appendChild(submitBtn);
-            inputContainer.appendChild(submitContainer);
-
-            submitBtn.addEventListener("click", () => {
-                addMessage("📤 Enviando sua propaganda...", "bot");
-                hiddenForm.submit();
-                submitBtn.disabled = true;
-                submitBtn.textContent = "⏳ Enviando...";
-            });
-
-            chatMessages.scrollTop = chatMessages.scrollHeight;
-        }, 800);
-    }
-
-    setTimeout(showQuestion, 500);
-});
+    initializeChatForm({
+        questions: questions,
+        summaryConfig: summaryConfig,
+        submissionConfig: submissionConfig
+    });
+}, { once: true });

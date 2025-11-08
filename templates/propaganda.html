@@ -3,6 +3,7 @@
 {% block title %}Faça sua Propaganda{% endblock %}
 
 {% block head %}
+    <link rel="stylesheet" href="/static/css/form.css">
     <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📢</text></svg>">
     <style>
         /* Form-specific overrides */
@@ -27,7 +28,7 @@
     <div id="main-content" class="hidden">
         <div id="chat-widget">
             <div id="chat-header">
-                <h1>📢 Faça sua Propaganda</h1>
+                <h1>📢 Formulário para Criação de Matéria Jornalística do Anunciante</h1>
                 <div class="progress-bar">
                     <div class="progress-fill" id="progress-fill"></div>
                 </div>
@@ -37,13 +38,22 @@
         </div>
 
         <form id="hidden-form" action="/propaganda" method="post" enctype="multipart/form-data" style="display: none;">
-            <input type="file" id="comprovante_path" name="comprovante_path" accept="image/*" required>
-            <input type="text" id="whatsapp" name="whatsapp" required>
-            <input type="text" id="nome_negocio" name="nome_negocio" required>
-            <input type="text" id="cidade" name="cidade" required>
-            <input type="text" id="bairro" name="bairro" required>
-            <textarea id="descricao" name="descricao" rows="4" required></textarea>
-            <input type="file" id="img_path" name="img_path" accept="image/*" required>
+            <input type="text" id="nome_empresa" name="nome_empresa" required>
+            <input type="text" id="nome_responsavel" name="nome_responsavel" required>
+            <input type="text" id="telefone_contato_equipe" name="telefone_contato_equipe" required>
+            <input type="text" id="telefone_empresa" name="telefone_empresa" required>
+            <input type="text" id="endereco" name="endereco" required>
+            <input type="text" id="tipo_negocio" name="tipo_negocio" required>
+            <textarea id="descricao_oferta" name="descricao_oferta" rows="4" required></textarea>
+            <input type="text" id="formas_pagamento" name="formas_pagamento" required>
+            <input type="text" id="desconto_vista" name="desconto_vista" required>
+            <input type="text" id="parcelas_cartao" name="parcelas_cartao" required>
+            <textarea id="promocoes" name="promocoes" rows="4"></textarea>
+            <input type="text" id="frase_destaque" name="frase_destaque">
+            <input type="text" id="produto_destaque" name="produto_destaque">
+            <input type="text" id="links_redes" name="links_redes">
+            <textarea id="outras_informacoes" name="outras_informacoes" rows="4"></textarea>
+            <input type="file" id="materiais_divulgacao" name="materiais_divulgacao" accept="image/*,video/*" multiple>
         </form>
     </div>
 {% endblock %}
@@ -56,11 +66,6 @@
             .then(html => {
                 document.getElementById('payment-notice-container').innerHTML = html;
             });
-
-        function acceptPaymentNotice() {
-            document.getElementById('policy-modal').classList.add('hidden');
-            document.getElementById('main-content').classList.remove('hidden');
-        }
     </script>
     <script src="{{ static_url_for(request, 'js/propaganda.js') }}"></script>
 {% endblock %}

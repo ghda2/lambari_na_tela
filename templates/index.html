@@ -1,92 +1,69 @@
 {% extends "base.html" %}
 
-{% block title %}Lambari NA TELA - Link na Bio{% endblock %}
+{% block title %}Lambari NA TELA - Conectando a Comunidade{% endblock %}
 
 {% block head %}
+    <link rel="stylesheet" href="/static/css/index.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
 {% endblock %}
 
 {% block content %}
-    <div class="container">
-        <img src="/uploads/lambari_na_tela_logo.svg" alt="Lambari na Tela Logo" class="logo">
-        <h1>Lambari NA TELA</h1>
-        <p>Conecte-se conosco</p>
-        <div class="buttons">
-            <a href="/forms" class="btn btn-denuncia">📝 Publicar minha reportagem</a>
-            <a href="/pet-perdido" class="btn btn-pet">🐾 Anunciar Pet Perdido</a>
-            <a href="/propaganda" class="btn btn-propaganda">📢 Faça sua Propaganda</a>
-            <a href="https://chat.whatsapp.com/IoCpO3NVEKsApG3kQ8OFCU" class="btn btn-whatsapp">💬 Entrar no Grupo WhatsApp</a>
-        </div>
-        <div class="weather">
-            <h2>Previsão do Tempo - Lambari</h2>
-            <div class="weather-info" id="weather-info">
-                <div class="weather-icon" id="weather-icon">⏳</div>
-                <div class="weather-details">
+    <main class="main-container">
+        <header class="page-header">
+            <img src="/uploads/lambari_na_tela_logo.svg" alt="Lambari na Tela Logo" class="logo">
+            <h1 class="site-title">Lambari NA TELA</h1>
+            <p class="site-subtitle">Sua conexão com a comunidade de Lambari</p>
+        </header>
+
+        <section class="services-section">
+            <div class="service-card">
+                <a href="/forms">
+                    <i class="service-icon fas fa-newspaper"></i>
+                    <h3 class="service-title">Publicar Reportagem</h3>
+                    <p class="service-description">Compartilhe sua história com a comunidade</p>
+                </a>
+            </div>
+            <div class="service-card">
+                <a href="/pet-perdido">
+                    <i class="service-icon fas fa-paw"></i>
+                    <h3 class="service-title">Anunciar Pet Perdido</h3>
+                    <p class="service-description">Ajude a reunir famílias com seus animais</p>
+                </a>
+            </div>
+            <div class="service-card">
+                <a href="/propaganda">
+                    <i class="service-icon fas fa-bullhorn"></i>
+                    <h3 class="service-title">Fazer Propaganda</h3>
+                    <p class="service-description">Divulgue seu negócio em nossa plataforma</p>
+                </a>
+            </div>
+            <div class="service-card">
+                <a href="https://chat.whatsapp.com/IoCpO3NVEKsApG3kQ8OFCU">
+                    <i class="service-icon fab fa-whatsapp"></i>
+                    <h3 class="service-title">Grupo no WhatsApp</h3>
+                    <p class="service-description">Conecte-se com a comunidade local</p>
+                </a>
+            </div>
+        </section>
+
+        <section class="weather-section">
+            <div class="weather-widget">
+                <div class="weather-header">
+                    <i class="fas fa-cloud-sun"></i>
+                    <h2 class="weather-title">Previsão do Tempo em Lambari</h2>
+                </div>
+                <div class="weather-content" id="weather-info">
                     <p id="temperature">Carregando...</p>
                     <p id="description">Carregando...</p>
                     <p id="wind">Carregando...</p>
                 </div>
             </div>
-        </div>
-    </div>
+        </section>
+    </main>
 {% endblock %}
 
 {% block scripts %}
-    <script>
-        async function fetchWeather() {
-            try {
-                const response = await fetch('https://api.open-meteo.com/v1/forecast?latitude=-23.3833&longitude=-50.1167&current_weather=true&hourly=temperature_2m,relative_humidity_2m,wind_speed_10m&timezone=America/Sao_Paulo');
-                const data = await response.json();
-                const current = data.current_weather;
-                const temperature = current.temperature;
-                const windSpeed = current.windspeed;
-                const weatherCode = current.weathercode;
-
-                // Mapeamento de códigos de tempo para ícones e descrições
-                const weatherMap = {
-                    0: { icon: '☀️', desc: 'Céu limpo' },
-                    1: { icon: '🌤️', desc: 'Parcialmente nublado' },
-                    2: { icon: '⛅', desc: 'Nublado' },
-                    3: { icon: '☁️', desc: 'Muito nublado' },
-                    45: { icon: '🌫️', desc: 'Neblina' },
-                    48: { icon: '🌫️', desc: 'Neblina congelante' },
-                    51: { icon: '🌦️', desc: 'Garoa leve' },
-                    53: { icon: '🌦️', desc: 'Garoa moderada' },
-                    55: { icon: '🌦️', desc: 'Garoa intensa' },
-                    56: { icon: '🌨️', desc: 'Garoa congelante leve' },
-                    57: { icon: '🌨️', desc: 'Garoa congelante intensa' },
-                    61: { icon: '🌧️', desc: 'Chuva leve' },
-                    63: { icon: '🌧️', desc: 'Chuva moderada' },
-                    65: { icon: '🌧️', desc: 'Chuva forte' },
-                    66: { icon: '🌨️', desc: 'Chuva congelante leve' },
-                    67: { icon: '🌨️', desc: 'Chuva congelante forte' },
-                    71: { icon: '❄️', desc: 'Neve leve' },
-                    73: { icon: '❄️', desc: 'Neve moderada' },
-                    75: { icon: '❄️', desc: 'Neve forte' },
-                    77: { icon: '❄️', desc: 'Grãos de neve' },
-                    80: { icon: '🌧️', desc: 'Chuva leve intermitente' },
-                    81: { icon: '🌧️', desc: 'Chuva moderada intermitente' },
-                    82: { icon: '🌧️', desc: 'Chuva forte intermitente' },
-                    85: { icon: '❄️', desc: 'Neve leve intermitente' },
-                    86: { icon: '❄️', desc: 'Neve forte intermitente' },
-                    95: { icon: '⛈️', desc: 'Tempestade' },
-                    96: { icon: '⛈️', desc: 'Tempestade com granizo leve' },
-                    99: { icon: '⛈️', desc: 'Tempestade com granizo forte' }
-                };
-
-                const weather = weatherMap[weatherCode] || { icon: '❓', desc: 'Desconhecido' };
-
-                document.getElementById('weather-icon').textContent = weather.icon;
-                document.getElementById('temperature').textContent = `Temperatura: ${temperature}°C`;
-                document.getElementById('description').textContent = `Condição: ${weather.desc}`;
-                document.getElementById('wind').textContent = `Vento: ${windSpeed} km/h`;
-            } catch (error) {
-                console.error('Erro ao buscar previsão:', error);
-                document.getElementById('temperature').textContent = 'Erro ao carregar';
-                document.getElementById('description').textContent = 'Tente novamente mais tarde';
-                document.getElementById('wind').textContent = '';
-            }
-        }
-
-        fetchWeather();
-    </script>
+    <script src="/static/js/weather.js"></script>
 {% endblock %}
