@@ -62,5 +62,7 @@
                 document.getElementById('main-content').classList.remove('hidden');
             });
     </script>
+    <script src="{{ static_url_for(request, 'js/utils.js') }}"></script>
+    <script src="{{ static_url_for(request, 'js/chat-form-handler.js') }}"></script>
     <script src="{{ static_url_for(request, 'js/forms.js') }}"></script>
 {% endblock %}

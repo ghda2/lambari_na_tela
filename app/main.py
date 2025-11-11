@@ -1,24 +1,19 @@
 import os
-from fastapi import FastAPI, Request, Form, HTTPException, UploadFile, Depends, Response, File
+from fastapi import FastAPI, Request, Form, HTTPException, UploadFile, File
 from fastapi.responses import HTMLResponse, RedirectResponse, JSONResponse
-from fastapi.templating import Jinja2Templates
 from fastapi.staticfiles import StaticFiles
 import httpx
-from datetime import datetime, timedelta
-from typing import Optional, List
-from jose import JWTError, jwt
-from passlib.context import CryptContext
+from datetime import datetime
+from typing import List
 from .file_handler import save_upload_file
-
-# --- Configuration ---
-SECRET_KEY = os.environ.get("SECRET_KEY", os.urandom(24).hex())
-ALGORITHM = "HS256"
-ACCESS_TOKEN_EXPIRE_MINUTES = 30
-
-ADMIN_USERNAME = os.environ.get("ADMIN_USERNAME", "admin")
-ADMIN_PASSWORD = os.environ.get("ADMIN_PASSWORD", "secret")
+from .dependencies import templates
 
 app = FastAPI()
+
+# --- Idempotency (in-memory) ---
+# Conjunto simples para bloquear dupla submissão baseada em token. Em produção, usar armazenamento persistente
+# ou TTL (Redis, banco) para evitar crescimento ilimitado.
+IDEMPOTENCY_TOKENS = set()
 
 # --- Static Files and Templates ---
 app.mount("/uploads", StaticFiles(directory="uploads"), name="uploads")
@@ -27,43 +22,7 @@ app.mount("/static", StaticFiles(directory="static"), name="static")
 def static_url_for(request: Request, filename: str):
     return request.url_for("static", path=filename)
 
-templates = Jinja2Templates(directory="templates")
 templates.env.globals["static_url_for"] = static_url_for
-
-# --- Security ---
-pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
-
-def verify_password(plain_password, hashed_password):
-    return pwd_context.verify(plain_password, hashed_password)
-
-def get_password_hash(password):
-    # Truncate password to 72 bytes for bcrypt
-    return pwd_context.hash(password[:72])
-
-HASHED_ADMIN_PASSWORD = get_password_hash(ADMIN_PASSWORD)
-
-def create_access_token(data: dict, expires_delta: Optional[timedelta] = None):
-    to_encode = data.copy()
-    if expires_delta:
-        expire = datetime.utcnow() + expires_delta
-    else:
-        expire = datetime.utcnow() + timedelta(minutes=15)
-    to_encode.update({"exp": expire})
-    encoded_jwt = jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
-    return encoded_jwt
-
-async def get_current_user(request: Request):
-    token = request.cookies.get("access_token")
-    if not token:
-        return None
-    try:
-        payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
-        username: str = payload.get("sub")
-        if username is None:
-            return None
-        return username
-    except JWTError:
-        return None
 
 # --- Directus Setup ---
 DIRECTUS_URL = "http://directus:8055"
@@ -210,7 +169,13 @@ async def create_video(request: Request,
                      bairro: str = Form(...),
                      problema: str = Form(...),
                      img_path: UploadFile = None,
-                     video_path: UploadFile = None):
+                     video_path: UploadFile = None,
+                     idempotency_token: str = Form(None)):
+    # Checagem de idempotência
+    if idempotency_token:
+        if idempotency_token in IDEMPOTENCY_TOKENS:
+            return RedirectResponse(url="/thank-you", status_code=303)
+        IDEMPOTENCY_TOKENS.add(idempotency_token)
     
     saved_img_path = save_upload_file(img_path)
     saved_video_path = save_upload_file(video_path)
@@ -248,7 +213,12 @@ async def create_pet_perdido(request: Request,
                      cidade: str = Form(...),
                      bairro: str = Form(...),
                      descricao: str = Form(...),
-                     img_path: UploadFile = None):
+                     img_path: UploadFile = None,
+                     idempotency_token: str = Form(None)):
+    if idempotency_token:
+        if idempotency_token in IDEMPOTENCY_TOKENS:
+            return RedirectResponse(url="/thank-you", status_code=303)
+        IDEMPOTENCY_TOKENS.add(idempotency_token)
     
     saved_comprovante_path = save_upload_file(comprovante_path)
     saved_img_path = save_upload_file(img_path)
@@ -290,7 +260,12 @@ async def create_objeto_perdido(request: Request,
                      nome_telefone_contato: str = Form(...),
                      recompensa: str = Form(...),
                      observacao: str = Form(""),
-                     fotos: UploadFile = File(None)):
+                     fotos: UploadFile = File(None),
+                     idempotency_token: str = Form(None)):
+    if idempotency_token:
+        if idempotency_token in IDEMPOTENCY_TOKENS:
+            return RedirectResponse(url="/thank-you", status_code=303)
+        IDEMPOTENCY_TOKENS.add(idempotency_token)
     
     saved_fotos_path = save_upload_file(fotos)
 
@@ -338,7 +313,12 @@ async def create_propaganda(request: Request,
                      produto_destaque: str = Form(""),
                      links_redes: str = Form(""),
                      outras_informacoes: str = Form(""),
-                     materiais_divulgacao: List[UploadFile] = File(None)):
+                     materiais_divulgacao: List[UploadFile] = File(None),
+                     idempotency_token: str = Form(None)):
+    if idempotency_token:
+        if idempotency_token in IDEMPOTENCY_TOKENS:
+            return RedirectResponse(url="/thank-you", status_code=303)
+        IDEMPOTENCY_TOKENS.add(idempotency_token)
     
     saved_materiais_paths = []
     if materiais_divulgacao:
@@ -379,107 +359,3 @@ async def create_propaganda(request: Request,
             pass
             
     return RedirectResponse(url="/thank-you", status_code=303)
-
-# --- Admin Panel ---
-@app.get("/login", response_class=HTMLResponse)
-async def login_get(request: Request):
-    return templates.TemplateResponse("login.html", {"request": request, "error": None})
-
-@app.post("/login")
-async def login_post(request: Request, username: str = Form(...), password: str = Form(...)):
-    if username == ADMIN_USERNAME and verify_password(password, HASHED_ADMIN_PASSWORD):
-        access_token_expires = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
-        access_token = create_access_token(
-            data={"sub": username}, expires_delta=access_token_expires
-        )
-        response = RedirectResponse(url="/admin", status_code=303)
-        response.set_cookie(key="access_token", value=access_token, httponly=True)
-        return response
-    return templates.TemplateResponse("login.html", {"request": request, "error": "Invalid credentials"})
-
-@app.get("/admin", response_class=HTMLResponse)
-async def admin_panel(request: Request, user: str = Depends(get_current_user)):
-    if not user:
-        return RedirectResponse(url="/login")
-
-    videos = []
-    async with httpx.AsyncClient() as client:
-        try:
-            # We need to authenticate to get data from Directus if it's not public
-            auth_response = await client.post(f"{DIRECTUS_URL}/auth/login", json={
-                "email": DIRECTUS_ADMIN_EMAIL,
-                "password": DIRECTUS_ADMIN_PASSWORD
-            })
-            auth_response.raise_for_status()
-            token = auth_response.json()['data']['access_token']
-            headers = {"Authorization": f"Bearer {token}"}
-
-            response = await client.get(f"{DIRECTUS_URL}/items/videos", headers=headers)
-            response.raise_for_status()
-            videos = response.json().get("data", [])
-            
-            # Format datetime for display
-            for video in videos:
-                if 'datetime' in video and video['datetime']:
-                    try:
-                        # Parse the datetime string and format it
-                        from datetime import datetime
-                        dt = datetime.fromisoformat(video['datetime'].replace('Z', '+00:00'))
-                        video['formatted_datetime'] = dt.strftime('%d/%m/%Y %H:%M')
-                    except:
-                        video['formatted_datetime'] = video['datetime']
-                else:
-                    video['formatted_datetime'] = 'N/A'
-        except (httpx.RequestError, httpx.HTTPStatusError) as e:
-            print(f"Error fetching videos from Directus: {e}")
-            pass
-
-    return templates.TemplateResponse("admin.html", {"request": request, "videos": videos})
-
-@app.get("/admin/video/{video_id}", response_class=HTMLResponse)
-async def video_detail(request: Request, video_id: int, user: str = Depends(get_current_user)):
-    if not user:
-        return RedirectResponse(url="/login")
-
-    video = None
-    async with httpx.AsyncClient() as client:
-        try:
-            # Authenticate with Directus
-            auth_response = await client.post(f"{DIRECTUS_URL}/auth/login", json={
-                "email": DIRECTUS_ADMIN_EMAIL,
-                "password": DIRECTUS_ADMIN_PASSWORD
-            })
-            auth_response.raise_for_status()
-            token = auth_response.json()['data']['access_token']
-            headers = {"Authorization": f"Bearer {token}"}
-
-            # Get specific video
-            response = await client.get(f"{DIRECTUS_URL}/items/videos/{video_id}", headers=headers)
-            response.raise_for_status()
-            video = response.json().get("data", {})
-
-            # Format datetime for display
-            if 'datetime' in video and video['datetime']:
-                try:
-                    from datetime import datetime
-                    dt = datetime.fromisoformat(video['datetime'].replace('Z', '+00:00'))
-                    video['formatted_datetime'] = dt.strftime('%d/%m/%Y %H:%M')
-                except:
-                    video['formatted_datetime'] = video['datetime']
-            else:
-                video['formatted_datetime'] = 'N/A'
-
-        except (httpx.RequestError, httpx.HTTPStatusError) as e:
-            print(f"Error fetching video {video_id}: {e}")
-            pass
-
-    if not video:
-        return templates.TemplateResponse("404.html", {"request": request, "message": "Vídeo não encontrado"})
-
-    return templates.TemplateResponse("video_detail.html", {"request": request, "video": video})
-
-@app.get("/logout")
-async def logout(request: Request):
-    response = RedirectResponse(url="/login")
-    response.delete_cookie("access_token")
-    return response

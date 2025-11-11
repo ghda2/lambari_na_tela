@@ -29,3 +29,42 @@ function validatePhoneNumber(phoneNumber) {
     const digits = phoneNumber.replace(/\D/g, '');
     return digits.length === 10 || digits.length === 11;
 }
+
+/**
+ * Previne dupla submissão em todos os formulários padrão da página.
+ * - Adiciona data-submitting="true" na primeira submissão.
+ * - Desabilita botões de submit para evitar clique repetido.
+ * - Armazena em sessionStorage uma chave simples para detecção de reenvio rápido (histórico / back).
+ */
+(function attachGlobalDoubleSubmitGuard() {
+    if (window.__doubleSubmitGuardAttached) return;
+    window.__doubleSubmitGuardAttached = true;
+
+    function disableSubmitButtons(form) {
+        const btns = form.querySelectorAll('button[type="submit"], input[type="submit"]');
+        btns.forEach(b => b.disabled = true);
+    }
+
+    function alreadySubmitted(form) {
+        return form.dataset.submitting === 'true';
+    }
+
+    function markSubmitted(form) {
+        form.dataset.submitting = 'true';
+        try {
+            sessionStorage.setItem('form:submitted:' + (form.action || 'noaction'), Date.now().toString());
+        } catch (e) {}
+    }
+
+    document.addEventListener('submit', (e) => {
+        const form = e.target;
+        if (!(form instanceof HTMLFormElement)) return;
+        if (alreadySubmitted(form)) {
+            e.preventDefault();
+            return;
+        }
+        disableSubmitButtons(form);
+        markSubmitted(form);
+    }, true); // capture para interceptar rápido
+})();
+
