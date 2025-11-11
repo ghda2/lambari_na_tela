@@ -6,7 +6,7 @@ from fastapi.responses import JSONResponse
 # Directus Configuration
 DIRECTUS_URL = "http://directus:8055"
 DIRECTUS_ADMIN_EMAIL = "admin@example.com"
-DIRECTUS_ADMIN_PASSWORD = "password"
+DIRECTUS_ADMIN_PASSWORD = "admin123"
 
 async def setup_directus():
     """
@@ -25,79 +25,104 @@ async def setup_directus():
 
             # 2. Create Collections
             collections = [
-                {"collection": "videos", "schema": {"name": "videos"}},
-                {"collection": "pet_perdido", "schema": {"name": "pet_perdido"}},
-                {"collection": "objeto_perdido", "schema": {"name": "objeto_perdido"}},
-                {"collection": "propaganda", "schema": {"name": "propaganda"}}
+                {"collection": "videos", "schema": {"name": "videos"}, "meta": {"singleton": False}},
+                {"collection": "pet_perdido", "schema": {"name": "pet_perdido"}, "meta": {"singleton": False}},
+                {"collection": "objeto_perdido", "schema": {"name": "objeto_perdido"}, "meta": {"singleton": False}},
+                {"collection": "propaganda", "schema": {"name": "propaganda"}, "meta": {"singleton": False}}
             ]
 
             for coll in collections:
-                await client.post(f"{DIRECTUS_URL}/collections", headers=headers, json=coll)
+                try:
+                    await client.post(f"{DIRECTUS_URL}/collections", headers=headers, json=coll)
+                    print(f"Collection {coll['collection']} created successfully")
+                except httpx.HTTPStatusError as e:
+                    if e.response.status_code == 400:
+                        print(f"Collection {coll['collection']} already exists")
+                    else:
+                        raise
 
             # 3. Create Fields for videos collection
             videos_fields = [
-                {"field": "whatsapp", "type": "string"},
-                {"field": "cidade", "type": "string"},
-                {"field": "bairro", "type": "string"},
-                {"field": "problema", "type": "text"},
-                {"field": "img_path", "type": "string"},
-                {"field": "video_path", "type": "string"},
+                {"field": "whatsapp", "type": "string", "meta": {"required": True}},
+                {"field": "cidade", "type": "string", "meta": {"required": True}},
+                {"field": "bairro", "type": "string", "meta": {"required": True}},
+                {"field": "problema", "type": "text", "meta": {"required": True}},
+                {"field": "img_path", "type": "file"},
+                {"field": "video_path", "type": "file"},
                 {"field": "ip", "type": "string"},
                 {"field": "datetime", "type": "datetime"}
             ]
 
             for field in videos_fields:
-                await client.post(f"{DIRECTUS_URL}/fields/videos", headers=headers, json=field)
+                try:
+                    await client.post(f"{DIRECTUS_URL}/fields/videos", headers=headers, json=field)
+                except httpx.HTTPStatusError as e:
+                    if e.response.status_code == 400:
+                        pass  # Field already exists
+                    else:
+                        raise
 
             # 4. Create Fields for pet_perdido collection
             pet_perdido_fields = [
                 {"field": "comprovante_path", "type": "string"},
-                {"field": "whatsapp", "type": "string"},
-                {"field": "nome_pet", "type": "string"},
-                {"field": "tipo_pet", "type": "string"},
-                {"field": "raca", "type": "string"},
-                {"field": "cidade", "type": "string"},
-                {"field": "bairro", "type": "string"},
-                {"field": "descricao", "type": "text"},
-                {"field": "img_path", "type": "string"},
+                {"field": "whatsapp", "type": "string", "meta": {"required": True}},
+                {"field": "nome_pet", "type": "string", "meta": {"required": True}},
+                {"field": "tipo_pet", "type": "string", "meta": {"required": True}},
+                {"field": "raca", "type": "string", "meta": {"required": True}},
+                {"field": "cidade", "type": "string", "meta": {"required": True}},
+                {"field": "bairro", "type": "string", "meta": {"required": True}},
+                {"field": "descricao", "type": "text", "meta": {"required": True}},
+                {"field": "img_path", "type": "file"},
                 {"field": "ip", "type": "string"},
                 {"field": "datetime", "type": "datetime"}
             ]
 
             for field in pet_perdido_fields:
-                await client.post(f"{DIRECTUS_URL}/fields/pet_perdido", headers=headers, json=field)
+                try:
+                    await client.post(f"{DIRECTUS_URL}/fields/pet_perdido", headers=headers, json=field)
+                except httpx.HTTPStatusError as e:
+                    if e.response.status_code == 400:
+                        pass  # Field already exists
+                    else:
+                        raise
 
             # 5. Create Fields for objeto_perdido collection
             objeto_perdido_fields = [
-                {"field": "nome_responsavel", "type": "string"},
-                {"field": "objeto_perdido", "type": "string"},
-                {"field": "descricao_detalhada", "type": "text"},
-                {"field": "data_horario", "type": "string"},
-                {"field": "local_perdido", "type": "text"},
-                {"field": "possibilidade_levado", "type": "text"},
-                {"field": "nome_telefone_contato", "type": "string"},
-                {"field": "recompensa", "type": "string"},
+                {"field": "nome_responsavel", "type": "string", "meta": {"required": True}},
+                {"field": "objeto_perdido", "type": "string", "meta": {"required": True}},
+                {"field": "descricao_detalhada", "type": "text", "meta": {"required": True}},
+                {"field": "data_horario", "type": "string", "meta": {"required": True}},
+                {"field": "local_perdido", "type": "text", "meta": {"required": True}},
+                {"field": "possibilidade_levado", "type": "text", "meta": {"required": True}},
+                {"field": "nome_telefone_contato", "type": "string", "meta": {"required": True}},
+                {"field": "recompensa", "type": "string", "meta": {"required": True}},
                 {"field": "observacao", "type": "text"},
-                {"field": "fotos", "type": "string"},
+                {"field": "fotos", "type": "file"},
                 {"field": "ip", "type": "string"},
                 {"field": "datetime", "type": "datetime"}
             ]
 
             for field in objeto_perdido_fields:
-                await client.post(f"{DIRECTUS_URL}/fields/objeto_perdido", headers=headers, json=field)
+                try:
+                    await client.post(f"{DIRECTUS_URL}/fields/objeto_perdido", headers=headers, json=field)
+                except httpx.HTTPStatusError as e:
+                    if e.response.status_code == 400:
+                        pass  # Field already exists
+                    else:
+                        raise
 
             # 6. Create Fields for propaganda collection
             propaganda_fields = [
-                {"field": "nome_empresa", "type": "string"},
-                {"field": "nome_responsavel", "type": "string"},
-                {"field": "telefone_contato_equipe", "type": "string"},
-                {"field": "telefone_empresa", "type": "string"},
-                {"field": "endereco", "type": "string"},
-                {"field": "tipo_negocio", "type": "string"},
-                {"field": "descricao_oferta", "type": "text"},
-                {"field": "formas_pagamento", "type": "string"},
-                {"field": "desconto_vista", "type": "string"},
-                {"field": "parcelas_cartao", "type": "string"},
+                {"field": "nome_empresa", "type": "string", "meta": {"required": True}},
+                {"field": "nome_responsavel", "type": "string", "meta": {"required": True}},
+                {"field": "telefone_contato_equipe", "type": "string", "meta": {"required": True}},
+                {"field": "telefone_empresa", "type": "string", "meta": {"required": True}},
+                {"field": "endereco", "type": "string", "meta": {"required": True}},
+                {"field": "tipo_negocio", "type": "string", "meta": {"required": True}},
+                {"field": "descricao_oferta", "type": "text", "meta": {"required": True}},
+                {"field": "formas_pagamento", "type": "string", "meta": {"required": True}},
+                {"field": "desconto_vista", "type": "string", "meta": {"required": True}},
+                {"field": "parcelas_cartao", "type": "string", "meta": {"required": True}},
                 {"field": "promocoes", "type": "text"},
                 {"field": "frase_destaque", "type": "string"},
                 {"field": "produto_destaque", "type": "string"},
@@ -109,42 +134,39 @@ async def setup_directus():
             ]
 
             for field in propaganda_fields:
-                await client.post(f"{DIRECTUS_URL}/fields/propaganda", headers=headers, json=field)
-
-            # 7. Set Public Permissions for Collections
-            permissions = [
-                {
-                    "collection": "videos",
-                    "action": "create",
-                    "role": None  # Public
-                },
-                {
-                    "collection": "pet_perdido",
-                    "action": "create",
-                    "role": None
-                },
-                {
-                    "collection": "objeto_perdido",
-                    "action": "create",
-                    "role": None
-                },
-                {
-                    "collection": "propaganda",
-                    "action": "create",
-                    "role": None
-                }
-            ]
-
-            for perm in permissions:
                 try:
-                    await client.post(f"{DIRECTUS_URL}/permissions", headers=headers, json=perm)
+                    await client.post(f"{DIRECTUS_URL}/fields/propaganda", headers=headers, json=field)
                 except httpx.HTTPStatusError as e:
-                    if e.response.status_code != 400:  # Ignore if already exists
+                    if e.response.status_code == 400:
+                        pass  # Field already exists
+                    else:
                         raise
 
-            return JSONResponse(content={"message": "Directus collections and permissions created successfully!"})
+            # 7. Set Public Permissions for Collections (read, create, update, delete)
+            collections_list = ["videos", "pet_perdido", "objeto_perdido", "propaganda"]
+            actions = ["create", "read", "update", "delete"]
+
+            for collection in collections_list:
+                for action in actions:
+                    permission = {
+                        "collection": collection,
+                        "action": action,
+                        "role": None  # Public access
+                    }
+                    try:
+                        await client.post(f"{DIRECTUS_URL}/permissions", headers=headers, json=permission)
+                        print(f"Permission {action} for {collection} created successfully")
+                    except httpx.HTTPStatusError as e:
+                        if e.response.status_code == 400:
+                            print(f"Permission {action} for {collection} already exists")
+                        else:
+                            raise
+
+            return JSONResponse(content={"message": "Directus collections, fields and permissions configured successfully!"})
 
         except (httpx.RequestError, httpx.HTTPStatusError) as e:
-            if e.response and e.response.status_code == 400:
-                 return JSONResponse(content={"message": "Collections might already exist."}, status_code=400)
-            raise HTTPException(status_code=500, detail=f"Error setting up Directus: {e}")
+            error_detail = f"Error setting up Directus: {e}"
+            if hasattr(e, 'response') and e.response:
+                error_detail += f" - Status: {e.response.status_code} - Response: {e.response.text}"
+            print(error_detail)
+            raise HTTPException(status_code=500, detail=error_detail)

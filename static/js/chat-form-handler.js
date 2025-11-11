@@ -39,6 +39,7 @@ function initializeChatForm({ questions, options = {}, validationMessages = {}, 
         // Renomeada para 'isLocked' para indicar que a interface está travada/bloqueada
         isLocked: false,
         submissionToken: null,
+        fileValues: {}
     };
 
     // Gera um token de idempotência (usa crypto se disponível, fallback simples)
@@ -189,9 +190,10 @@ function initializeChatForm({ questions, options = {}, validationMessages = {}, 
             inputEl.inputMode = "tel";
         }
 
-        const sendBtn = document.createElement("button");
-        sendBtn.id = "chat-send-btn";
-        sendBtn.textContent = "Enviar";
+    const sendBtn = document.createElement("button");
+    sendBtn.id = "chat-send-btn";
+    sendBtn.type = 'button';
+    sendBtn.textContent = "Enviar";
         if (state.isLocked) sendBtn.disabled = true;
 
         inputContainer.appendChild(inputEl);
@@ -206,7 +208,7 @@ function initializeChatForm({ questions, options = {}, validationMessages = {}, 
             }
         }
 
-        sendBtn.addEventListener("click", () => handleUserInput());
+    sendBtn.addEventListener("click", () => handleUserInput());
         inputEl.addEventListener("keypress", (e) => {
             if (e.key === "Enter" && !e.shiftKey) {
                 e.preventDefault();
@@ -224,12 +226,20 @@ function initializeChatForm({ questions, options = {}, validationMessages = {}, 
         fileInput.multiple = question.multiple || false;
         if (state.isLocked) fileInput.disabled = true; 
 
+        const sendBtn = document.createElement("button");
+        sendBtn.id = "chat-send-btn";
+        sendBtn.type = 'button';
+        sendBtn.textContent = "Enviar";
+        if (state.isLocked) sendBtn.disabled = true;
+
         const skipBtn = document.createElement("button");
         skipBtn.id = "chat-skip-btn";
         skipBtn.textContent = "Pular";
+        skipBtn.type = 'button';
         if (state.isLocked) skipBtn.disabled = true;
 
         inputContainer.appendChild(fileInput);
+        inputContainer.appendChild(sendBtn);
         if (!question.required) {
             inputContainer.appendChild(skipBtn);
             // CORREÇÃO: Passa um objeto para forçar o tratamento de "Pular" e não ler o DOM.
@@ -237,22 +247,24 @@ function initializeChatForm({ questions, options = {}, validationMessages = {}, 
         }
 
         fileInput.addEventListener("change", (e) => {
-            // Este evento é o único que aciona o handleUserInput sem um botão/enter
-            if (state.isLocked) {
-                e.preventDefault();
-                return;
-            }
-            
+            // Apenas valida o número máximo de arquivos
             const maxFiles = question.maxFiles || Infinity;
             if (e.target.files.length > maxFiles) {
                 addErrorMessage(`Máximo de ${maxFiles} arquivos permitidos.`);
                 fileInput.value = '';
                 return;
             }
-            if (e.target.files.length > 0) {
-                toggleInputLock(true); // Trava o input antes de chamar o handler
-                handleUserInput(e.target.files, `📎 ${Array.from(e.target.files).map(f => f.name).join(', ')}`);
+            // Habilita o botão enviar se houver arquivos selecionados
+            sendBtn.disabled = e.target.files.length === 0;
+        });
+
+        sendBtn.addEventListener("click", () => {
+            if (fileInput.files.length === 0) {
+                addErrorMessage(MESSAGES.NO_FILE);
+                return;
             }
+            // Não bloquear antes; handleUserInput já bloqueia após iniciar
+            handleUserInput(fileInput.files, `📎 ${Array.from(fileInput.files).map(f => f.name).join(', ')}`);
         });
     }
 
@@ -269,11 +281,11 @@ function initializeChatForm({ questions, options = {}, validationMessages = {}, 
             if (state.isLocked) optBtn.disabled = true; 
             optionsContainer.appendChild(optBtn);
 
-            optBtn.addEventListener("click", () => {
-                 if (state.isLocked) return;
-                 toggleInputLock(true); // Trava o input antes de chamar o handler
-                 handleUserInput(opt.value, opt.label || opt.text);
-            });
+          optBtn.addEventListener("click", () => {
+              if (state.isLocked) return;
+              // Não bloquear previamente; deixar handleUserInput gerenciar
+              handleUserInput(opt.value, opt.label || opt.text);
+          });
         });
         inputContainer.appendChild(optionsContainer);
     }
@@ -333,34 +345,23 @@ function initializeChatForm({ questions, options = {}, validationMessages = {}, 
             const hiddenInput = document.getElementById(question.id);
             if (hiddenInput) {
                 if (isFile) {
-                    // Para campos de arquivo, o input do formulário oculto precisa ser do tipo file para ser submetido
-                    if (hiddenInput.type !== 'file') {
-                        hiddenInput.type = 'file'; // Ajuste dinâmico (se necessário)
-                    }
-                    if (hiddenInput.files !== value) {
-                        // Simulação de atribuição de FileList
-                        Object.defineProperty(hiddenInput, 'files', {
-                            value: value,
-                            writable: false,
-                        });
-                    }
+                    // Armazenar os arquivos no estado
+                    state.fileValues[question.id] = value;
                 } else {
                     hiddenInput.value = value || "";
                 }
             } else {
-                 // Se o input oculto não existe, criá-lo
-                 const newHiddenInput = document.createElement(isFile ? 'input' : 'input');
-                 newHiddenInput.type = isFile ? 'file' : 'hidden';
-                 newHiddenInput.name = question.id;
-                 newHiddenInput.id = question.id;
-                 hiddenForm.appendChild(newHiddenInput);
-                 if (isFile) {
-                     Object.defineProperty(newHiddenInput, 'files', {
-                         value: value,
-                         writable: false,
-                     });
-                 } else {
+                 // Se o input oculto não existe, criá-lo (para campos não arquivo)
+                 if (!isFile) {
+                     const newHiddenInput = document.createElement('input');
+                     newHiddenInput.type = 'hidden';
+                     newHiddenInput.name = question.id;
+                     newHiddenInput.id = question.id;
+                     hiddenForm.appendChild(newHiddenInput);
                      newHiddenInput.value = value || "";
+                 } else {
+                     // Para arquivos, apenas armazenar no estado
+                     state.fileValues[question.id] = value;
                  }
             }
 
@@ -424,14 +425,14 @@ function initializeChatForm({ questions, options = {}, validationMessages = {}, 
             questions.forEach((q, index) => {
                 const hiddenInput = document.getElementById(q.id);
                 // Devemos garantir que o hiddenInput existe ou criar um placeholder para exibição
-                if (!hiddenInput) {
+                if (!hiddenInput && q.type !== 'file') {
                     // Crie um input hidden temporário ou use um valor padrão se a pergunta foi pulada
                     return; 
                 }
 
                 let valueText;
                 if (q.type === 'file') {
-                    const files = hiddenInput.files || [];
+                    const files = state.fileValues[q.id] || [];
                     valueText = files.length > 0 ? `📎 ${Array.from(files).map(f => f.name).join(', ')}` : "Nenhum arquivo";
                 } else {
                     valueText = hiddenInput.value || "Não preenchido";
@@ -487,18 +488,48 @@ function initializeChatForm({ questions, options = {}, validationMessages = {}, 
                 }
                 tokenInput.value = state.submissionToken;
 
+                // Construir FormData com os valores
+                const formData = new FormData();
+                questions.forEach(q => {
+                    if (q.type === 'file') {
+                        const files = state.fileValues[q.id];
+                        if (files && files.length > 0) {
+                            Array.from(files).forEach(file => formData.append(q.id, file));
+                        }
+                    } else {
+                        const hiddenInput = document.getElementById(q.id);
+                        if (hiddenInput && hiddenInput.value) {
+                            formData.append(q.id, hiddenInput.value);
+                        }
+                    }
+                });
+                formData.append('idempotency_token', state.submissionToken);
+
                 // Mensagem visual e bloqueio
                 addMessage(MESSAGES.SUBMIT_SUCCESS_TEXT, "bot");
                 submitBtn.disabled = true;
                 submitBtn.textContent = MESSAGES.SUBMITTING_TEXT;
                 flagFormSubmitted(hiddenForm, state.submissionToken);
 
-                // Usa requestSubmit para respeitar validators nativos
-                if (hiddenForm.requestSubmit) {
-                    hiddenForm.requestSubmit();
-                } else {
-                    hiddenForm.submit();
-                }
+                // Enviar via fetch
+                fetch(hiddenForm.action, {
+                    method: hiddenForm.method,
+                    body: formData
+                }).then(response => {
+                    if (response.ok) {
+                        // Redirecionar para página de agradecimento ou similar
+                        window.location.href = '/thank_you';
+                    } else {
+                        addErrorMessage('Erro ao enviar. Tente novamente.');
+                        submitBtn.disabled = false;
+                        submitBtn.textContent = MESSAGES.SUBMIT_BUTTON_TEXT;
+                    }
+                }).catch(error => {
+                    console.error('Erro ao enviar formulário:', error);
+                    addErrorMessage('Erro de conexão. Tente novamente.');
+                    submitBtn.disabled = false;
+                    submitBtn.textContent = MESSAGES.SUBMIT_BUTTON_TEXT;
+                });
             });
 
             chatMessages.scrollTop = chatMessages.scrollHeight;

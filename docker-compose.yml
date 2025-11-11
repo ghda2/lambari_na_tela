@@ -1,15 +1,22 @@
+version: '3.8'
+
 services:
   db:
     image: postgres:13
     container_name: lambari_db
     environment:
-      POSTGRES_DB: ${DB_DATABASE}
-      POSTGRES_USER: ${DB_USER}
-      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_DB: directus
+      POSTGRES_USER: directus
+      POSTGRES_PASSWORD: directus
     volumes:
       - postgres_data:/var/lib/postgresql/data
     networks:
       - lambari_network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U directus"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
   directus:
     image: directus/directus:latest
@@ -17,22 +24,25 @@ services:
     ports:
       - "8055:8055"
     environment:
-      KEY: ${DIRECTUS_KEY}
-      SECRET: ${DIRECTUS_SECRET}
+      KEY: "255d861b-5ea1-5996-9aa3-922530ec40b1"
+      SECRET: "6116487b-cda1-52c2-b5b5-c8022c45e263"
       DB_CLIENT: "pg"
       DB_HOST: "db"
       DB_PORT: "5432"
-      DB_DATABASE: ${DB_DATABASE}
-      DB_USER: ${DB_USER}
-      DB_PASSWORD: ${DB_PASSWORD}
-      ADMIN_EMAIL: ${ADMIN_EMAIL}
-      ADMIN_PASSWORD: ${ADMIN_PASSWORD}
-      PUBLIC_URL: "https://lambarinatela.com.br/admin"
+      DB_DATABASE: "directus"
+      DB_USER: "directus"
+      DB_PASSWORD: "directus"
+      ADMIN_EMAIL: "admin@example.com"
+      ADMIN_PASSWORD: "admin123"
+      PUBLIC_URL: "http://localhost:8055"
+      CORS_ENABLED: "true"
+      CORS_ORIGIN: "true"
       WEBSOCKETS_ENABLED: "true"
-    depends_on:
-      - db
     volumes:
       - directus_uploads:/directus/uploads
+    depends_on:
+      db:
+        condition: service_healthy
     networks:
       - lambari_network
 
@@ -41,26 +51,15 @@ services:
     container_name: lambari_fastapi
     ports:
       - "8000:8000"
-    command: ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000", "--log-level", "info"]
-    environment:
-      SECRET_KEY: "your-secret-key-here"
-      ADMIN_USERNAME: "admin"
-      ADMIN_PASSWORD: "secret"
-    depends_on:
-      - db
-    volumes:
-      - ./uploads:/app/uploads
-    networks:
-      - lambari_network
-
-  setup:
-    build: .
-    container_name: lambari_setup
-    command: ["python", "app/setup_directus.py"]
     environment:
       DIRECTUS_URL: "http://directus:8055"
-      DIRECTUS_ADMIN_EMAIL: ${ADMIN_EMAIL}
-      DIRECTUS_ADMIN_PASSWORD: ${ADMIN_PASSWORD}
+      DIRECTUS_EMAIL: "admin@example.com"
+      DIRECTUS_PASSWORD: "admin123"
+    volumes:
+      - ./app:/app/app
+      - ./templates:/app/templates
+      - ./static:/app/static
+      - ./uploads:/app/uploads
     depends_on:
       - directus
     networks:
