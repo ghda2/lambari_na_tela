@@ -14,6 +14,8 @@ services:
   directus:
     image: directus/directus:latest
     container_name: lambari_directus
+    ports:
+      - "8055:8055"
     environment:
       KEY: ${DIRECTUS_KEY}
       SECRET: ${DIRECTUS_SECRET}
@@ -37,6 +39,8 @@ services:
   fastapi:
     build: .
     container_name: lambari_fastapi
+    ports:
+      - "8000:8000"
     command: ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000", "--log-level", "info"]
     environment:
       SECRET_KEY: "your-secret-key-here"
@@ -62,26 +66,9 @@ services:
     networks:
       - lambari_network
 
-  caddy:
-    image: caddy:2
-    container_name: lambari_caddy
-    ports:
-      - "80:80"
-      - "443:443"
-    volumes:
-      - ./Caddyfile:/etc/caddy/Caddyfile
-      - caddy_data:/data
-      - caddy_config:/config
-    depends_on:
-      - fastapi
-    networks:
-      - lambari_network
-
 volumes:
   postgres_data:
   directus_uploads:
-  caddy_data:
-  caddy_config:
 
 networks:
   lambari_network:
