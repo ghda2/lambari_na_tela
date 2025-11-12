@@ -1,0 +1,12 @@
+{
+  "name": "directus-setup",
+  "version": "1.0.0",
+  "description": "Script para configurar coleções no Directus",
+  "main": "setup-collections.js",
+  "scripts": {
+    "setup": "node setup-collections.js"
+  },
+  "dependencies": {
+    "node-fetch": "^2.6.7"
+  }
+}
