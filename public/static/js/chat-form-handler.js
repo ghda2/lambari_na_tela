@@ -477,7 +477,6 @@ function initializeChatForm({ questions, options = {}, validationMessages = {}, 
                     return; // JÃ¡ estÃ¡ em processo de envio
                 }
 
-<<<<<<< HEAD
                 // Verificar se SupabaseUtils está disponível
                 if (typeof window.SupabaseUtils === 'undefined') {
                     console.error('SupabaseUtils não está carregado. Verificando dependências...');
@@ -486,9 +485,6 @@ function initializeChatForm({ questions, options = {}, validationMessages = {}, 
                 }
 
                 // Callback de preparação (ex: mapear campos)
-=======
-                // Callback de preparaÃ§Ã£o (ex: mapear campos)
->>>>>>> eebceffa0a062648d3db705e63b1979a3dc96c45
                 if (submissionConfig.preSubmitCallback) {
                     submissionConfig.preSubmitCallback();
                 }
@@ -499,31 +495,17 @@ function initializeChatForm({ questions, options = {}, validationMessages = {}, 
                 submitBtn.textContent = MESSAGES.SUBMITTING_TEXT;
                 flagFormSubmitted(hiddenForm, "token"); // Simple token for client-side prevention
 
-<<<<<<< HEAD
                 // --- INÍCIO DA NOVA LÓGICA COM UPLOAD LOCAL + SUPABASE ---
                 try {
                     // 1. Separar arquivos de outros dados do formulário
                     const jsonData = {};
                     const uploadedFiles = {};
-=======
-                // --- INÍCIO DA NOVA LÓGICA DIRECTUS (VIA SERVIDOR) ---
-                const API_BASE_URL = 'http://localhost:8055';  // URL do Directus
-
-                try {
-                    // 1. Separar arquivos de outros dados do formulÃ¡rio
-                    const jsonData = {};
-                    const fileFields = [];
->>>>>>> eebceffa0a062648d3db705e63b1979a3dc96c45
 
                     questions.forEach(q => {
                         if (q.type === 'file') {
                             const files = state.fileValues[q.id];
                             if (files && files.length > 0) {
-<<<<<<< HEAD
                                 uploadedFiles[q.id] = Array.from(files);
-=======
-                                fileFields.push({ id: q.id, files: Array.from(files), multiple: q.multiple || false });
->>>>>>> eebceffa0a062648d3db705e63b1979a3dc96c45
                             }
                         } else {
                             const hiddenInput = document.getElementById(q.id);
@@ -533,7 +515,6 @@ function initializeChatForm({ questions, options = {}, validationMessages = {}, 
                         }
                     });
 
-<<<<<<< HEAD
                     // 2. Fazer upload de todos os arquivos localmente
                     const uploadedFilePaths = {};
                     const baseName = jsonData.problema || jsonData.nome || ''; // Usar campo principal como nome
@@ -584,97 +565,12 @@ function initializeChatForm({ questions, options = {}, validationMessages = {}, 
                     // Exibe uma mensagem de erro mais específica para o usuário
                     addErrorMessage(`Ocorreu um erro: ${error.message}. Por favor, tente novamente.`);
                     // Desbloquear o botão para nova tentativa
-=======
-                    // 2. Fazer upload de todos os arquivos para o Directus e coletar os IDs
-                    const uploadedFilePayload = {};
-
-                    for (const field of fileFields) {
-                        if (field.multiple) {
-                            const fieldIds = [];
-                            for (const file of field.files) {
-                                const fileFormData = new FormData();
-                                fileFormData.append('file', file);
-
-                                const response = await fetch(`${API_BASE_URL}/files`, {
-                                    method: 'POST',
-                                    body: fileFormData
-                                });
-
-                                if (!response.ok) {
-                                    const error = await response.json();
-                                    console.error('Falha no upload do arquivo:', error);
-                                    throw new Error(`Falha no upload do arquivo: ${file.name}`);
-                                }
-
-                                const result = await response.json();
-                                // Para M2M, apenas adiciona o ID direto
-                                fieldIds.push(result.data.id);
-                            }
-                            uploadedFilePayload[field.id] = fieldIds;
-                        } else {
-                            // Single file
-                            const file = field.files[0];
-                            const fileFormData = new FormData();
-                            fileFormData.append('file', file);
-
-                            const response = await fetch(`${API_BASE_URL}/files`, {
-                                method: 'POST',
-                                body: fileFormData
-                            });
-
-                            if (!response.ok) {
-                                const error = await response.json();
-                                console.error('Falha no upload do arquivo:', error);
-                                throw new Error(`Falha no upload do arquivo: ${file.name}`);
-                            }
-
-                            const result = await response.json();
-                            uploadedFilePayload[field.id] = result.data.id;
-                        }
-                    }
-
-                    // 3. Combinar dados JSON com os IDs dos arquivos
-                    const finalPayload = { ...jsonData, ...uploadedFilePayload };
-
-                    // Pega o nome da coleÃ§Ã£o da aÃ§Ã£o do formulÃ¡rio (ex: /objeto-perdido)
-                    const collectionName = hiddenForm.action.split('/').pop();
-
-                    // 4. Criar o item via servidor
-                    const createItemResponse = await fetch(`${API_BASE_URL}/items/${collectionName}`, {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json'
-                        },
-                        body: JSON.stringify(finalPayload)
-                    });
-
-                    if (createItemResponse.ok) {
-                        // Limpar o estado do formulÃ¡rio no localStorage apÃ³s o sucesso
-                        if (options.storageKey) {
-                            localStorage.removeItem(options.storageKey);
-                        }
-                        window.location.href = '/thank-you';
-                    } else {
-                        const errorData = await createItemResponse.json();
-                        console.error('Falha ao criar item:', errorData);
-                        throw new Error('Não foi possível criar o registro. Tente novamente.');
-                    }
-
-                } catch (error) {
-                    console.error('Erro ao enviar para o Directus:', error);
-                    addErrorMessage('Erro de conexÃ£o ao enviar. Por favor, tente novamente.');
-                    // Desbloquear o botÃ£o para nova tentativa
->>>>>>> eebceffa0a062648d3db705e63b1979a3dc96c45
                     submitBtn.disabled = false;
                     submitBtn.textContent = MESSAGES.SUBMIT_BUTTON_TEXT;
                     // Reverter o estado de "submitting"
                     hiddenForm.dataset.submitting = 'false';
                 }
-<<<<<<< HEAD
                 // --- FIM DA NOVA LÓGICA COM UPLOAD LOCAL + SUPABASE ---
-=======
-                // --- FIM DA NOVA LÓGICA DIRECTUS ---
->>>>>>> eebceffa0a062648d3db705e63b1979a3dc96c45
             });
 
             chatMessages.scrollTop = chatMessages.scrollHeight;

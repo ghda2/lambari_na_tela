@@ -30,6 +30,9 @@ CREATE TABLE public.pets_perdidos (
   created_at timestamp without time zone DEFAULT CURRENT_TIMESTAMP,
   idade text,
   data_desaparecimento text,
+  sexo text,
+  local_desaparecimento text,
+  nome_tutor text,
   CONSTRAINT pets_perdidos_pkey PRIMARY KEY (id)
 );
 CREATE TABLE public.propagandas (

@@ -1,31 +1,22 @@
 {
-<<<<<<< HEAD
-  "name": "lambari-na-tela-db-test",
+  "name": "lambari-na-tela",
   "version": "1.0.0",
-  "description": "Test script for database connection",
-  "main": "test-db.js",
+  "description": "Aplicação web para anúncios de objetos e pets perdidos",
+  "main": "server.js",
   "scripts": {
-    "test": "node test-db.js",
-    "test-supabase": "node test-supabase.js"
+    "start": "node server.js",
+    "dev": "nodemon server.js",
+    "setup-directus": "node directus-setup.js"
   },
   "dependencies": {
-    "@supabase/supabase-js": "^2.81.1",
-    "express": "^5.1.0",
-    "multer": "^2.0.2",
-    "pg": "^8.11.0",
-    "sharp": "^0.34.5"
-  }
-}
-=======
-  "name": "directus-setup",
-  "version": "1.0.0",
-  "description": "Script para configurar coleções no Directus",
-  "main": "setup-collections.js",
-  "scripts": {
-    "setup": "node setup-collections.js"
+    "express": "^4.18.2",
+    "multer": "^1.4.5-lts.1",
+    "cors": "^2.8.5",
+    "path": "^0.12.7",
+    "fs": "^0.0.1-security",
+    "axios": "^1.6.0"
   },
-  "dependencies": {
-    "node-fetch": "^2.6.7"
+  "devDependencies": {
+    "nodemon": "^3.0.1"
   }
 }
->>>>>>> eebceffa0a062648d3db705e63b1979a3dc96c45
