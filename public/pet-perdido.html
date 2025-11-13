@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Anunciar Pet Perdido</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>ðŸ¾</text></svg>">
+    <link rel="stylesheet" href="/static/css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="/static/css/form.css">
+    <style>
+        /* Form-specific overrides */
+        .modal .accept-btn {
+            background: #ff9800;
+        }
+        .modal .accept-btn:hover {
+            background: #e68900;
+        }
+    </style>
+</head>
+<body class="">
+    <!-- Modal de InformaÃ§Ãµes -->
+    <div id="policy-modal" class="modal">
+        <div class="modal-content">
+            <!-- Aviso de Pagamento -->
+            <div id="payment-notice-container"></div>
+        </div>
+    </div>
+
+    <div id="main-content" class="hidden">
+        <div id="chat-widget">
+            <div id="chat-header">
+                <h1>ðŸ¾ Anunciar Pet Perdido</h1>
+                <div class="progress-bar">
+                    <div class="progress-fill" id="progress-fill"></div>
+                </div>
+            </div>
+            <div id="chat-messages"></div>
+            <div id="chat-input-container"></div>
+        </div>
+
+        <!-- Hidden form to collect data - this gets populated by the chat interface -->
+        <form id="hidden-form" action="/pet-perdido" method="post" enctype="multipart/form-data" style="display: none;">
+            <!-- Inputs são gerados dinamicamente pelo chat-form-handler.js -->
+        </form>
+    </div>
+
+    <script src="/static/js/modals.js"></script>
+    <script src="/static/js/utils.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="/static/js/supabase-utils.js"></script>
+    <script src="/static/js/chat-form-handler.js"></script>
+    <script>
+        // Carregar o aviso de pagamento
+        fetch('/static/html/payment_notice.html')
+            .then(response => response.text())
+            .then(html => {
+                document.getElementById('payment-notice-container').innerHTML = html;
+            });
+    </script>
+    <script src="/static/js/pet_perdido.js"></script>
+</body>
+</html>

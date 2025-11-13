@@ -1,20 +1,18 @@
-# Use an official Python runtime as a parent image
-FROM python:3.10-slim
+# Dockerfile para o servidor de upload
+FROM python:3.9-slim
 
-# Set the working directory in the container
 WORKDIR /app
 
-# Copy the dependencies file to the working directory
+# Instalar dependências
 COPY requirements.txt .
-
-# Install any needed dependencies
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Copy the rest of the application
-COPY . .
+# Copiar código
+COPY upload_server.py .
 
-# Expose the port the app runs on
-EXPOSE 8000
+# Criar volume para uploads
+VOLUME ["/app/public"]
 
-# Run the application
-CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000", "--log-level", "error"]
+EXPOSE 5000
+
+CMD ["python", "upload_server.py"]

@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FaÃ§a sua Propaganda</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>ðŸ“¢</text></svg>">
+    <link rel="stylesheet" href="/static/css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="/static/css/form.css">
+    <style>
+        /* Form-specific overrides */
+        .modal .accept-btn {
+            background: #4caf50;
+        }
+        .modal .accept-btn:hover {
+            background: #45a049;
+        }
+    </style>
+</head>
+<body class="">
+    <!-- Modal de InformaÃ§Ãµes -->
+    <div id="policy-modal" class="modal">
+        <div class="modal-content">
+            <!-- Aviso de Pagamento -->
+            <div id="payment-notice-container"></div>
+        </div>
+    </div>
+
+    <div id="main-content" class="hidden">
+        <div id="chat-widget">
+            <div id="chat-header">
+                <h1>ðŸ“¢ FormulÃ¡rio para CriaÃ§Ã£o de MatÃ©ria JornalÃ­stica do Anunciante</h1>
+                <div class="progress-bar">
+                    <div class="progress-fill" id="progress-fill"></div>
+                </div>
+            </div>
+            <div id="chat-messages"></div>
+            <div id="chat-input-container"></div>
+        </div>
+
+        <form id="hidden-form" action="/propaganda" method="post" enctype="multipart/form-data" style="display: none;">
+            <input type="text" id="nome_empresa" name="nome_empresa" required>
+            <input type="text" id="nome_responsavel" name="nome_responsavel" required>
+            <input type="text" id="telefone_contato_equipe" name="telefone_contato_equipe" required>
+            <input type="text" id="telefone_empresa" name="telefone_empresa" required>
+            <input type="text" id="endereco" name="endereco" required>
+            <input type="text" id="tipo_negocio" name="tipo_negocio" required>
+            <textarea id="descricao_oferta" name="descricao_oferta" rows="4" required></textarea>
+            <input type="text" id="formas_pagamento" name="formas_pagamento" required>
+            <input type="text" id="desconto_vista" name="desconto_vista" required>
+            <input type="text" id="parcelas_cartao" name="parcelas_cartao" required>
+            <textarea id="promocoes" name="promocoes" rows="4"></textarea>
+            <input type="text" id="frase_destaque" name="frase_destaque">
+            <input type="text" id="produto_destaque" name="produto_destaque">
+            <input type="text" id="links_redes" name="links_redes">
+            <textarea id="outras_informacoes" name="outras_informacoes" rows="4"></textarea>
+            <input type="file" id="materiais_divulgacao" name="materiais_divulgacao" accept="image/*,video/*" multiple>
+        </form>
+    </div>
+
+    <script src="/static/js/modals.js"></script>
+    <script src="/static/js/utils.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="/static/js/supabase-utils.js"></script>
+    <script src="/static/js/chat-form-handler.js"></script>
+    <script>
+        // Carregar o aviso de pagamento
+        fetch('/static/html/payment_notice.html')
+            .then(response => response.text())
+            .then(html => {
+                document.getElementById('payment-notice-container').innerHTML = html;
+            });
+    </script>
+    <script src="/static/js/propaganda.js"></script>
+</body>
+</html>

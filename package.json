@@ -1,0 +1,17 @@
+{
+  "name": "lambari-na-tela-db-test",
+  "version": "1.0.0",
+  "description": "Test script for database connection",
+  "main": "test-db.js",
+  "scripts": {
+    "test": "node test-db.js",
+    "test-supabase": "node test-supabase.js"
+  },
+  "dependencies": {
+    "@supabase/supabase-js": "^2.81.1",
+    "express": "^5.1.0",
+    "multer": "^2.0.2",
+    "pg": "^8.11.0",
+    "sharp": "^0.34.5"
+  }
+}
