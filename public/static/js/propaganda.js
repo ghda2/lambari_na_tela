@@ -2,8 +2,8 @@ document.addEventListener("chat:start", () => {
     const questions = [
         { id: "nome_empresa", text: "1. Nome da empresa: (Exemplo: Madeireira do Levy, LLs Bistrô, Evandro Café Consulting...)", type: "text", required: true },
         { id: "nome_responsavel", text: "2. Nome do responsável pelo anúncio: (Quem autoriza ou representa a empresa para esta divulgação. 👉 O nome não será utilizado na publicação — servirá apenas para contato, caso seja necessário.)", type: "text", required: true },
-        { id: "telefone_contato_equipe", text: "3. Telefone ou WhatsApp para contato com a equipe Lambari na Tela: (👉 Esse número será usado exclusivamente para contato interno, caso precisemos confirmar informações ou ajustar o conteúdo antes da publicação.)", type: "text", required: true },
-        { id: "telefone_empresa", text: "4. Telefone ou WhatsApp da empresa (para divulgação): (👉 Esse número será exibido na matéria para que os clientes possam entrar em contato diretamente com a empresa.)", type: "text", required: true },
+        { id: "telefone_contato_equipe", text: "3. Telefone ou WhatsApp para contato com a equipe Lambari na Tela: (👉 Esse número será usado exclusivamente para contato interno, caso precisemos confirmar informações ou ajustar o conteúdo antes da publicação.)", type: "tel", required: true },
+        { id: "telefone_empresa", text: "4. Telefone ou WhatsApp da empresa (para divulgação): (👉 Esse número será exibido na matéria para que os clientes possam entrar em contato diretamente com a empresa.)", type: "tel", required: true },
         { id: "endereco", text: "5. Endereço completo da empresa: (Rua, número, bairro e cidade)", type: "text", required: true },
         { id: "tipo_negocio", text: "6. Tipo de negócio / segmento: (Exemplo: restaurante, loja de roupas, madeireira, consultoria, academia, etc.)", type: "text", required: true },
         { id: "descricao_oferta", text: "7. Descreva brevemente o que a empresa oferece: (Produtos, serviços, diferenciais, o que a torna especial)", type: "textarea", required: true },

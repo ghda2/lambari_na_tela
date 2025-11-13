@@ -7,6 +7,36 @@ Este projeto roda com dois serviços Docker:
 
 Admin não usa servidor separado; é servido pelo próprio Express em `/admin`.
 
+## Configuração Inicial
+
+### 1. Configurar variáveis de ambiente
+
+Copie o arquivo `.env.example` para `.env`:
+
+```powershell
+copy .env.example .env
+```
+
+Edite o arquivo `.env` e configure suas credenciais de administrador:
+
+```env
+ADMIN_USERNAME=seu_usuario
+ADMIN_PASSWORD=sua_senha_segura
+SESSION_SECRET=uma_chave_secreta_aleatoria
+PORT=3000
+```
+
+**IMPORTANTE:** 
+- Nunca commit o arquivo `.env` no Git (já está no `.gitignore`)
+- Use uma senha forte para o administrador
+- Altere o `SESSION_SECRET` para uma string aleatória e única
+
+### 2. Instalar dependências
+
+```powershell
+npm install
+```
+
 ## Como iniciar
 
 Primeira vez:
@@ -22,6 +52,16 @@ docker compose up -d
 ```
 
 Acesse em: http://localhost
+
+## Acesso Administrativo
+
+O painel administrativo possui autenticação protegida por login:
+
+- **URL:** http://localhost/admin
+- **Login:** Use as credenciais configuradas no arquivo `.env`
+- **Sessão:** A sessão dura 24 horas
+
+Ao acessar `/admin` sem estar autenticado, você será redirecionado para a tela de login.
 
 ## Parar e reiniciar
 

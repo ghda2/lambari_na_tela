@@ -1,70 +1,130 @@
-<!DOCTYPE html><html lang="pt-BR">
+<!DOCTYPE html>
+<html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Obrigado!</title>
-    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>âœ…</text></svg>">    <link rel="stylesheet" href="/static/css/style.css">
+    <title>Obrigado! - Lambari na Tela</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>✅</text></svg>">
+    <link rel="stylesheet" href="/static/css/style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
         body {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
             min-height: 100vh;
             display: flex;
             align-items: center;
             justify-content: center;
             margin: 0;
+            padding: 20px;
             font-family: 'Poppins', sans-serif;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        /* Background Animation */
+        body::before {
+            content: '';
+            position: fixed;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(214, 31, 28, 0.08) 0%, transparent 70%);
+            animation: pulseBackground 15s ease-in-out infinite;
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        @keyframes pulseBackground {
+            0%, 100% { transform: scale(1) rotate(0deg); opacity: 0.3; }
+            50% { transform: scale(1.1) rotate(180deg); opacity: 0.5; }
         }
 
         .thank-you-container {
-            background: white;
-            padding: 40px;
-            border-radius: 20px;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+            padding: 50px 40px;
+            border-radius: 25px;
+            box-shadow: 0 25px 70px rgba(0, 0, 0, 0.4);
             text-align: center;
-            max-width: 500px;
-            width: 90%;
+            max-width: 550px;
+            width: 100%;
+            animation: slideUp 0.5s ease-out;
+            position: relative;
+            z-index: 1;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
         .thank-you-icon {
-            font-size: 4rem;
-            margin-bottom: 20px;
+            font-size: 5rem;
+            margin-bottom: 25px;
+            animation: bounce 1s ease-in-out;
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-20px); }
         }
 
         .thank-you-title {
-            color: #2d2c44;
-            font-size: 2rem;
+            color: #1a1a2e;
+            font-size: 2.5rem;
             margin-bottom: 15px;
             font-weight: 700;
         }
 
         .thank-you-message {
-            color: #666;
+            color: #444;
             font-size: 1.1rem;
-            line-height: 1.6;
-            margin-bottom: 30px;
+            line-height: 1.8;
+            margin-bottom: 35px;
         }
 
-        .redirect-timer {
-            color: #4caf50;
-            font-weight: bold;
-            font-size: 1.2rem;
+        .countdown-text {
+            color: #1a1a2e;
+            font-weight: 600;
+            font-size: 1.1rem;
+            margin-bottom: 20px;
+        }
+
+        #countdown {
+            font-weight: 700;
+            font-size: 1.3rem;
+            color: #d61f1c;
         }
 
         .progress-bar {
             width: 100%;
-            height: 4px;
+            height: 6px;
             background: #e0e0e0;
-            border-radius: 2px;
-            margin-top: 20px;
+            border-radius: 3px;
             overflow: hidden;
+            margin-bottom: 25px;
+            box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1);
         }
 
         .progress-fill {
             height: 100%;
-            background: linear-gradient(90deg, #4caf50, #45a049);
+            background: linear-gradient(90deg, #d61f1c, #ff3838, #d61f1c);
+            background-size: 200% 100%;
             width: 100%;
-            animation: countdown 20s linear forwards;
+            animation: countdown 20s linear forwards, progressShine 2s ease-in-out infinite;
         }
 
         @keyframes countdown {
@@ -72,31 +132,132 @@
             to { width: 0%; }
         }
 
+        @keyframes progressShine {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 12px 30px;
+            border: none;
+            border-radius: 25px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            text-decoration: none;
+            display: inline-block;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+            transition: left 0.5s;
+        }
+
+        .btn:hover::before {
+            left: 100%;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #d61f1c, #ff3838);
+            color: white;
+            box-shadow: 0 4px 15px rgba(214, 31, 28, 0.3);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(214, 31, 28, 0.5);
+        }
+
+        .btn-secondary {
+            background: white;
+            color: #d61f1c;
+            border: 2px solid #d61f1c;
+        }
+
+        .btn-secondary:hover {
+            background: linear-gradient(135deg, #d61f1c, #ff3838);
+            color: white;
+            border-color: transparent;
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(214, 31, 28, 0.5);
+        }
+
+        .click-hint {
+            margin-top: 20px;
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        .click-hint i {
+            color: #d61f1c;
+        }
+
         @media (max-width: 600px) {
             .thank-you-container {
-                padding: 30px 20px;
+                padding: 40px 25px;
+            }
+
+            .thank-you-icon {
+                font-size: 4rem;
             }
 
             .thank-you-title {
-                font-size: 1.8rem;
+                font-size: 2rem;
             }
 
             .thank-you-message {
                 font-size: 1rem;
             }
+
+            .btn {
+                padding: 10px 25px;
+                font-size: 0.95rem;
+            }
         }
     </style>
 </head>
-<body class="">
+<body>
     <div class="thank-you-container">
-        <div class="thank-you-icon">âœ…</div>
+        <div class="thank-you-icon">✅</div>
         <h1 class="thank-you-title">Obrigado!</h1>
         <p class="thank-you-message">
-            Seu anÃºncio foi enviado com sucesso e serÃ¡ analisado em breve.
-            VocÃª serÃ¡ redirecionado automaticamente para a pÃ¡gina inicial em <span id="countdown">20</span> segundos.        </p>
+            Seu anúncio foi enviado com sucesso e será analisado em breve.<br>
+            Agradecemos por usar o Lambari na Tela!
+        </p>
+        <p class="countdown-text">
+            Redirecionando em <span id="countdown">20</span> segundos...
+        </p>
         <div class="progress-bar">
             <div class="progress-fill"></div>
         </div>
+        <div class="action-buttons">
+            <a href="/" class="btn btn-primary">
+                <i class="fas fa-home"></i> Ir para Início
+            </a>
+            <a href="/forms.html" class="btn btn-secondary">
+                <i class="fas fa-plus"></i> Novo Anúncio
+            </a>
+        </div>
+        <p class="click-hint">
+            <i class="fas fa-info-circle"></i> Clique em qualquer lugar para ir à página inicial
+        </p>
     </div>
 
     <script src="/static/js/modals.js"></script>
@@ -116,10 +277,21 @@
             }
         }, 1000);
 
-        // Allow manual redirect by clicking anywhere
-        document.addEventListener('click', () => {
-            clearInterval(timer);
-            window.location.href = '/';
+        // Allow manual redirect by clicking anywhere on the container
+        document.querySelector('.thank-you-container').addEventListener('click', (e) => {
+            // Don't redirect if clicking on buttons
+            if (!e.target.closest('.btn')) {
+                clearInterval(timer);
+                window.location.href = '/';
+            }
+        });
+
+        // Prevent double redirect when clicking buttons
+        document.querySelectorAll('.btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                clearInterval(timer);
+                // Let the link handle navigation
+            });
         });
     </script>
 </body>

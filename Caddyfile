@@ -1,11 +1,16 @@
 # Caddyfile
 
-# Ambiente local: atende qualquer host em :80 (ex.: http://localhost)
-:80 {
+# Produção: domínio principal com HTTPS automático
+lambarinatela.com.br {
     reverse_proxy app:3000
 }
 
-# Produção: substitua pelo seu domínio para HTTPS automático
-# exemplo.com {
-#     reverse_proxy app:3000
-# }
+# Redirecionar www para domínio principal
+www.lambarinatela.com.br {
+    redir https://lambarinatela.com.br{uri} permanent
+}
+
+# Ambiente local para desenvolvimento
+:80 {
+    reverse_proxy app:3000
+}
