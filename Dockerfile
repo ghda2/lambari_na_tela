@@ -1,18 +1,23 @@
-# Dockerfile para o servidor de upload
-FROM python:3.9-slim
+# Use Node.js official image
+FROM node:18-alpine
 
+# Set working directory
 WORKDIR /app
 
-# Instalar dependências
-COPY requirements.txt .
-RUN pip install --no-cache-dir -r requirements.txt
+# Copy package files
+COPY package*.json ./
 
-# Copiar código
-COPY upload_server.py .
+# Install dependencies
+RUN npm install
 
-# Criar volume para uploads
-VOLUME ["/app/public"]
+# Copy application code
+COPY . .
 
-EXPOSE 5000
+# Create uploads directory at project root
+RUN mkdir -p uploads
 
-CMD ["python", "upload_server.py"]
+# Expose port
+EXPOSE 3000
+
+# Start the application
+CMD ["npm", "start"]
