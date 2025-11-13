@@ -1,4 +1,5 @@
 {
+<<<<<<< HEAD
   "name": "lambari-na-tela-db-test",
   "version": "1.0.0",
   "description": "Test script for database connection",
@@ -15,3 +16,16 @@
     "sharp": "^0.34.5"
   }
 }
+=======
+  "name": "directus-setup",
+  "version": "1.0.0",
+  "description": "Script para configurar coleções no Directus",
+  "main": "setup-collections.js",
+  "scripts": {
+    "setup": "node setup-collections.js"
+  },
+  "dependencies": {
+    "node-fetch": "^2.6.7"
+  }
+}
+>>>>>>> eebceffa0a062648d3db705e63b1979a3dc96c45
