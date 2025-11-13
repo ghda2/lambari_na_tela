@@ -1,5 +1,11 @@
+# Caddyfile
+
+# Ambiente local: atende qualquer host em :80 (ex.: http://localhost)
 :80 {
-    root * /usr/share/caddy/html
-    try_files {path}.html {path} {path}/ /index.html
-    file_server
+    reverse_proxy app:3000
 }
+
+# Produção: substitua pelo seu domínio para HTTPS automático
+# exemplo.com {
+#     reverse_proxy app:3000
+# }

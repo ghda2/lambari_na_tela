@@ -9,6 +9,12 @@
       - ./uploads:/app/uploads
     networks:
       - app-network
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://localhost:3000/healthz || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
 
   caddy:
     image: caddy:2-alpine
@@ -24,7 +30,8 @@
     networks:
       - app-network
     depends_on:
-      - app
+      app:
+        condition: service_healthy
 
 volumes:
   caddy_data:

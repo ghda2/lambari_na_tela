@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Painel Administrativo - Lambari na Tela</title>
+    <link rel="stylesheet" href="css/admin.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <!-- Mobile Menu Toggle -->
+    <button class="mobile-menu-toggle" id="mobile-menu-toggle" aria-label="Toggle menu">
+        <i class="fas fa-bars"></i>
+    </button>
+
+    <!-- Sidebar -->
+    <aside class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <div class="logo">
+                <i class="fas fa-satellite-dish"></i>
+                <h2>Lambari na Tela</h2>
+            </div>
+            <button class="sidebar-close" id="sidebar-close" aria-label="Close sidebar">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+
+        <nav class="sidebar-nav">
+            <a href="#" class="nav-item active" data-section="dashboard">
+                <i class="fas fa-chart-line"></i>
+                <span>Dashboard</span>
+            </a>
+            <a href="#" class="nav-item" data-section="pets_perdidos">
+                <i class="fas fa-paw"></i>
+                <span>Pets Perdidos</span>
+                <span class="badge" id="badge-pets">0</span>
+            </a>
+            <a href="#" class="nav-item" data-section="objetos_perdidos">
+                <i class="fas fa-search"></i>
+                <span>Objetos Perdidos</span>
+                <span class="badge" id="badge-objetos">0</span>
+            </a>
+            <a href="#" class="nav-item" data-section="propagandas">
+                <i class="fas fa-bullhorn"></i>
+                <span>Propagandas</span>
+                <span class="badge" id="badge-propagandas">0</span>
+            </a>
+            <a href="#" class="nav-item" data-section="reportagens">
+                <i class="fas fa-newspaper"></i>
+                <span>Reportagens</span>
+                <span class="badge" id="badge-reportagens">0</span>
+            </a>
+        </nav>
+
+        <div class="sidebar-footer">
+            <button class="theme-toggle" id="theme-toggle" aria-label="Toggle theme">
+                <i class="fas fa-moon"></i>
+                <span>Modo Escuro</span>
+            </button>
+        </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-left">
+                <h1 id="page-title">Dashboard</h1>
+                <p class="header-subtitle" id="page-subtitle">Visão geral do sistema</p>
+            </div>
+            <div class="header-right">
+                <button class="btn-refresh" id="btn-refresh" aria-label="Atualizar">
+                    <i class="fas fa-sync-alt"></i>
+                </button>
+                <button class="btn-export" id="btn-export" aria-label="Exportar">
+                    <i class="fas fa-download"></i>
+                    <span>Exportar</span>
+                </button>
+            </div>
+        </header>
+
+        <!-- Dashboard Stats -->
+        <section class="stats-grid" id="stats-grid">
+            <div class="stat-card">
+                <div class="stat-icon pets">
+                    <i class="fas fa-paw"></i>
+                </div>
+                <div class="stat-info">
+                    <h3 id="stat-pets">0</h3>
+                    <p>Pets Perdidos</p>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon objetos">
+                    <i class="fas fa-search"></i>
+                </div>
+                <div class="stat-info">
+                    <h3 id="stat-objetos">0</h3>
+                    <p>Objetos Perdidos</p>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon propagandas">
+                    <i class="fas fa-bullhorn"></i>
+                </div>
+                <div class="stat-info">
+                    <h3 id="stat-propagandas">0</h3>
+                    <p>Propagandas</p>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon reportagens">
+                    <i class="fas fa-newspaper"></i>
+                </div>
+                <div class="stat-info">
+                    <h3 id="stat-reportagens">0</h3>
+                    <p>Reportagens</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Filters & Search -->
+        <section class="controls-bar">
+            <div class="search-box">
+                <i class="fas fa-search"></i>
+                <input type="text" id="search-input" placeholder="Buscar publicações...">
+            </div>
+            <div class="filter-controls">
+                <select id="filter-status" class="filter-select">
+                    <option value="all">Todos os Status</option>
+                    <option value="pending">Pendentes</option>
+                    <option value="approved">Aprovados</option>
+                    <option value="rejected">Rejeitados</option>
+                </select>
+                <select id="sort-by" class="filter-select">
+                    <option value="newest">Mais Recentes</option>
+                    <option value="oldest">Mais Antigos</option>
+                    <option value="name">Nome (A-Z)</option>
+                </select>
+            </div>
+        </section>
+
+        <!-- Publications List -->
+        <section class="publications-section">
+            <div id="publications-list" class="publications-grid">
+                <!-- Cards serão inseridos aqui -->
+            </div>
+            
+            <!-- Pagination -->
+            <div class="pagination" id="pagination">
+                <button class="pagination-btn" id="prev-page" disabled>
+                    <i class="fas fa-chevron-left"></i>
+                    Anterior
+                </button>
+                <div class="pagination-info">
+                    <span id="current-page">1</span> / <span id="total-pages">1</span>
+                </div>
+                <button class="pagination-btn" id="next-page">
+                    Próximo
+                    <i class="fas fa-chevron-right"></i>
+                </button>
+            </div>
+        </section>
+
+        <!-- Empty State -->
+        <div class="empty-state" id="empty-state" style="display: none;">
+            <i class="fas fa-inbox"></i>
+            <h3>Nenhuma publicação encontrada</h3>
+            <p>Não há itens para exibir nesta categoria.</p>
+        </div>
+
+        <!-- Loading State -->
+        <div class="loading-state" id="loading-state">
+            <div class="spinner"></div>
+            <p>Carregando...</p>
+        </div>
+    </main>
+
+    <!-- Detail Modal -->
+    <div class="modal" id="detail-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="modal-title">Detalhes</h2>
+                <button class="modal-close" id="modal-close">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body" id="modal-body">
+                <!-- Conteúdo dos detalhes -->
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-danger" id="btn-delete">
+                    <i class="fas fa-trash"></i>
+                    Excluir
+                </button>
+                <button class="btn btn-success" id="btn-approve">
+                    <i class="fas fa-check"></i>
+                    Aprovar
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Notifications -->
+    <div class="toast-container" id="toast-container"></div>
+
+    <script type="module" src="js/admin.js"></script>
+</body>
+</html>

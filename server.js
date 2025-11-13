@@ -69,6 +69,28 @@ app.post('/propaganda', (req, res) => {
     res.redirect('/thank_you.html');
 });
 
+// Healthcheck endpoint for Docker
+app.get('/healthz', (req, res) => {
+    res.status(200).send('ok');
+});
+
+// Explicit routes for specific pages (must come before catch-all)
+app.get('/objeto-perdido', (req, res) => {
+    res.sendFile(path.join(__dirname, 'public', 'objeto-perdido.html'));
+});
+
+app.get('/pet-perdido', (req, res) => {
+    res.sendFile(path.join(__dirname, 'public', 'pet-perdido.html'));
+});
+
+app.get('/propaganda', (req, res) => {
+    res.sendFile(path.join(__dirname, 'public', 'propaganda.html'));
+});
+
+app.get('/forms', (req, res) => {
+    res.sendFile(path.join(__dirname, 'public', 'forms.html'));
+});
+
 // Catch all handler: send back index.html for client-side routing
 app.get('*', (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'index.html'));

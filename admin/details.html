@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Detalhes da Publicação - Painel Administrativo</title>
+    <link rel="stylesheet" href="css/admin.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="details-page">
+        <!-- Back Button -->
+        <div class="back-navigation">
+            <a href="index.html" class="btn-back">
+                <i class="fas fa-arrow-left"></i>
+                <span>Voltar</span>
+            </a>
+        </div>
+
+        <!-- Details Container -->
+        <div class="details-container">
+            <div class="loading-state" id="loading-state">
+                <div class="spinner"></div>
+                <p>Carregando detalhes...</p>
+            </div>
+
+            <div class="details-content" id="details-content" style="display: none;">
+                <!-- Header -->
+                <div class="details-header">
+                    <div class="details-title-section">
+                        <h1 id="item-title">Título do Item</h1>
+                        <div class="item-meta">
+                            <span class="meta-badge" id="item-type">Tipo</span>
+                            <span class="meta-date" id="item-date">Data</span>
+                        </div>
+                    </div>
+                    <div class="details-actions">
+                        <button class="btn btn-success" id="btn-approve">
+                            <i class="fas fa-check"></i>
+                            <span>Aprovar</span>
+                        </button>
+                        <button class="btn btn-danger" id="btn-delete">
+                            <i class="fas fa-trash"></i>
+                            <span>Excluir</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Image Gallery -->
+                <div class="image-gallery" id="image-gallery" style="display: none;">
+                    <div class="gallery-main">
+                        <img id="main-image" src="" alt="Imagem principal">
+                        <button class="gallery-nav prev" id="gallery-prev">
+                            <i class="fas fa-chevron-left"></i>
+                        </button>
+                        <button class="gallery-nav next" id="gallery-next">
+                            <i class="fas fa-chevron-right"></i>
+                        </button>
+                    </div>
+                    <div class="gallery-thumbnails" id="gallery-thumbnails">
+                        <!-- Miniaturas -->
+                    </div>
+                </div>
+
+                <!-- Details Grid -->
+                <div class="details-grid" id="details-grid">
+                    <!-- Campos serão inseridos aqui -->
+                </div>
+
+                <!-- Additional Info -->
+                <div class="additional-info">
+                    <h3><i class="fas fa-info-circle"></i> Informações Adicionais</h3>
+                    <div class="info-grid" id="info-grid">
+                        <!-- Info adicional -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Error State -->
+            <div class="error-state" id="error-state" style="display: none;">
+                <i class="fas fa-exclamation-triangle"></i>
+                <h3>Erro ao carregar detalhes</h3>
+                <p id="error-message">Ocorreu um erro ao carregar os detalhes do item.</p>
+                <a href="index.html" class="btn btn-primary">Voltar ao painel</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Image Lightbox -->
+    <div class="lightbox" id="lightbox">
+        <button class="lightbox-close" id="lightbox-close">
+            <i class="fas fa-times"></i>
+        </button>
+        <img id="lightbox-image" src="" alt="Visualização ampliada">
+    </div>
+
+    <!-- Toast Notifications -->
+    <div class="toast-container" id="toast-container"></div>
+
+    <script type="module" src="js/details.js"></script>
+</body>
+</html>
