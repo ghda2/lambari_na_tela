@@ -4,6 +4,7 @@ const path = require('path');
 const fs = require('fs');
 const cors = require('cors');
 const session = require('express-session');
+const SQLiteStore = require('connect-sqlite3')(session);
 require('dotenv').config();
 
 const app = express();
@@ -19,6 +20,10 @@ app.use(express.urlencoded({ extended: true }));
 
 // Session configuration (must be before routes)
 app.use(session({
+    store: new SQLiteStore({
+        db: 'sessions.db',
+        dir: './data'
+    }),
     secret: process.env.SESSION_SECRET || 'default-secret-key-change-in-production',
     resave: false,
     saveUninitialized: false,

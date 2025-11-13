@@ -1,6 +1,10 @@
 # Environment variables
 .env
 
+# Session storage
+data/
+sessions.db
+
 # Node modules
 node_modules/
 
