@@ -163,6 +163,10 @@ app.post('/propaganda', (req, res) => {
     res.redirect('/thank_you.html');
 });
 
+app.post('/propaganda-story', (req, res) => {
+    res.redirect('/thank_you.html');
+});
+
 // Healthcheck endpoint for Docker
 app.get('/healthz', (req, res) => {
     res.status(200).send('ok');
@@ -179,6 +183,10 @@ app.get('/pet-perdido', (req, res) => {
 
 app.get('/propaganda', (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'propaganda.html'));
+});
+
+app.get('/propaganda-story', (req, res) => {
+    res.sendFile(path.join(__dirname, 'public', 'propaganda-story.html'));
 });
 
 app.get('/forms', (req, res) => {

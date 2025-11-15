@@ -3,18 +3,18 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Anunciar Objeto Perdido</title>
-    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🔍</text></svg>">
+    <title>Faça sua Propaganda no Story</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📢</text></svg>">
     <link rel="stylesheet" href="/static/css/style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <link rel="stylesheet" href="/static/css/form.css">
     <style>
         /* Form-specific overrides */
         .modal .accept-btn {
-            background: #ff9800;
+            background: #4caf50;
         }
         .modal .accept-btn:hover {
-            background: #e68900;
+            background: #45a049;
         }
     </style>
 </head>
@@ -30,7 +30,7 @@
     <div id="main-content" class="hidden">
         <div id="chat-widget">
             <div id="chat-header">
-                <h1>🔍 Anunciar Objeto Perdido</h1>
+                <h1>📢 Formulário para Propaganda no Story</h1>
                 <div class="progress-bar">
                     <div class="progress-fill" id="progress-fill"></div>
                 </div>
@@ -39,19 +39,9 @@
             <div id="chat-input-container"></div>
         </div>
 
-        <!-- Hidden form to collect data - this gets populated by the chat interface -->
-        <form id="hidden-form" action="/objeto-perdido" method="post" enctype="multipart/form-data" style="display: none;">
+        <form id="hidden-form" action="/propaganda-story" method="post" enctype="multipart/form-data" style="display: none;">
             <input type="file" id="comprovante_pagamento" name="comprovante_pagamento" accept="image/*,application/pdf" required>
-            <input type="text" id="nome_responsavel" name="nome_responsavel">
-            <input type="text" id="objeto_perdido" name="objeto_perdido">
-            <textarea id="descricao_detalhada" name="descricao_detalhada" rows="4"></textarea>
-            <input type="text" id="data_horario" name="data_horario">
-            <input type="text" id="local_perdido" name="local_perdido">
-            <input type="text" id="possibilidade_levado" name="possibilidade_levado">
-            <input type="text" id="nome_telefone_contato" name="nome_telefone_contato">
-            <input type="text" id="recompensa" name="recompensa">
-            <textarea id="observacao" name="observacao" rows="4"></textarea>
-            <input type="file" id="fotos" name="fotos" accept="image/*" multiple>
+            <input type="file" id="arquivos_stories" name="arquivos_stories" accept="image/*,video/*" multiple required>
         </form>
     </div>
 
@@ -68,6 +58,6 @@
                 document.getElementById('payment-notice-container').innerHTML = html;
             });
     </script>
-    <script src="/static/js/objeto_perdido.js"></script>
+    <script src="/static/js/propaganda-story.js"></script>
 </body>
 </html>

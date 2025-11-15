@@ -34,6 +34,10 @@ function isImagePath(p) {
     return typeof p === 'string' && p.startsWith('/uploads/') && /\.(png|jpe?g|gif|webp|avif)$/i.test(p);
 }
 
+function isPdfPath(p) {
+    return typeof p === 'string' && p.startsWith('/uploads/') && /\.pdf$/i.test(p);
+}
+
 function formatDate(dateString) {
     const date = new Date(dateString);
     return new Intl.DateTimeFormat('pt-BR', {
@@ -127,6 +131,17 @@ function initGallery(images) {
     $('#lightbox').addEventListener('click', (e) => {
         if (e.target === $('#lightbox')) {
             $('#lightbox').classList.remove('show');
+        }
+    });
+    
+    // Comprovante modal
+    $('#comprovante-close').addEventListener('click', () => {
+        $('#comprovante-modal').classList.remove('show');
+    });
+    
+    $('#comprovante-modal').addEventListener('click', (e) => {
+        if (e.target === $('#comprovante-modal')) {
+            $('#comprovante-modal').classList.remove('show');
         }
     });
 }
@@ -250,32 +265,46 @@ function renderRecordDetails(record, table) {
     
     // Setup action buttons
     setupActionButtons(table, record.id);
+    
+    // Setup comprovante button if exists
+    setupComprovanteButton(record);
 }
 
-function setupActionButtons(table, id) {
-    $('#btn-approve').onclick = async () => {
-        try {
-            await updateRecord(table, id, { status: 'aprovado' });
-            showToast('Item aprovado com sucesso!', 'success');
-            setTimeout(() => window.location.href = 'index.html', 1500);
-        } catch (error) {
-            console.error('Erro ao aprovar:', error);
-            showToast('Erro ao aprovar item: ' + error.message, 'error');
-        }
-    };
+function setupComprovanteButton(record) {
+    const comprovantePath = record.comprovante_pagamento;
+    if (!comprovantePath) return;
     
-    $('#btn-delete').onclick = async () => {
-        if (!confirm('Tem certeza que deseja excluir este item?')) return;
-        
-        try {
-            await deleteRecord(table, id);
-            showToast('Item excluído com sucesso!', 'success');
-            setTimeout(() => window.location.href = 'index.html', 1500);
-        } catch (error) {
-            console.error('Erro ao excluir:', error);
-            showToast('Erro ao excluir item: ' + error.message, 'error');
-        }
-    };
+    const actionsDiv = $('#details-actions');
+    let button;
+    
+    if (isImagePath(comprovantePath)) {
+        button = el('button', { 
+            class: 'btn btn-info',
+            onclick: () => {
+                const localPath = comprovantePath.replace('/uploads/', '../uploads/');
+                $('#comprovante-image').src = localPath;
+                $('#comprovante-modal').classList.add('show');
+            }
+        }, [
+            el('i', { class: 'fas fa-eye' }),
+            el('span', {}, 'Ver comprovante')
+        ]);
+    } else if (isPdfPath(comprovantePath)) {
+        button = el('button', { 
+            class: 'btn btn-info',
+            onclick: () => {
+                const localPath = comprovantePath.replace('/uploads/', '../uploads/');
+                window.open(localPath, '_blank');
+            }
+        }, [
+            el('i', { class: 'fas fa-download' }),
+            el('span', {}, 'Baixar comprovante')
+        ]);
+    }
+    
+    if (button) {
+        actionsDiv.appendChild(button);
+    }
 }
 
 function showError(message) {

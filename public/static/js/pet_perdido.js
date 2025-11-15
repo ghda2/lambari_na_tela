@@ -1,20 +1,20 @@
 document.addEventListener("chat:start", () => {
     // IDs correspondem diretamente às colunas do Supabase
     const questions = [
-        { id: "comprovante_path", text: "Anexe o comprovante de pagamento do Pix.", type: "file", accept: "image/*", required: true },
-        { id: "nome_pet", text: "Qual o nome do seu pet?", type: "text", required: true },
-        { id: "tipo_pet", text: "Qual a espécie do seu pet?", type: "button", required: true },
-        { id: "raca", text: "E a raça? (Se não souber, pode escrever 'Vira-lata')", type: "text", required: true },
-        { id: "sexo", text: "Qual o sexo do animal?", type: "button", required: true },
-        { id: "idade", text: "Qual a idade aproximada?", type: "text", required: true },
-        { id: "descricao", text: "Descreva cor e características marcantes (manchas, tamanho, coleira, etc.)", type: "textarea", required: true },
-        { id: "local_desaparecimento", text: "Onde ele desapareceu? (Bairro, rua, ponto de referência)", type: "textarea", required: true },
-        { id: "data_desaparecimento", text: "Quando ele desapareceu? (Data e horário aproximado)", type: "text", required: true },
-        { id: "bairro", text: "Qual o bairro do desaparecimento?", type: "text", required: true },
-        { id: "nome_tutor", text: "Qual o nome do tutor?", type: "text", required: true },
-        { id: "whatsapp", text: "Qual o seu WhatsApp para contato?", type: "tel", required: true },
-        { id: "cidade", text: "Em qual cidade o pet desapareceu?", type: "text", required: true },
-        { id: "img_path", text: "Anexe de 1 a 3 fotos do seu pet.", type: "file", accept: "image/*", multiple: true, required: true }
+        { id: "comprovante_pagamento", text: "1. Anexe o comprovante de pagamento: 👉 Anexe a imagem ou PDF do comprovante do Pix realizado.", type: "file", accept: "image/*,application/pdf", required: true },
+        { id: "nome_pet", text: "2. Qual o nome do seu pet?", type: "text", required: true },
+        { id: "tipo_pet", text: "3. Qual a espécie do seu pet?", type: "button", required: true },
+        { id: "raca", text: "4. E a raça? (Se não souber, pode escrever 'Vira-lata')", type: "text", required: true },
+        { id: "sexo", text: "5. Qual o sexo do animal?", type: "button", required: true },
+        { id: "idade", text: "6. Qual a idade aproximada?", type: "text", required: true },
+        { id: "descricao", text: "7. Descreva cor e características marcantes (manchas, tamanho, coleira, etc.)", type: "textarea", required: true },
+        { id: "local_desaparecimento", text: "8. Onde ele desapareceu? (Bairro, rua, ponto de referência)", type: "textarea", required: true },
+        { id: "data_desaparecimento", text: "9. Quando ele desapareceu? (Data e horário aproximado)", type: "text", required: true },
+        { id: "bairro", text: "10. Qual o bairro do desaparecimento?", type: "text", required: true },
+        { id: "nome_tutor", text: "11. Qual o nome do tutor?", type: "text", required: true },
+        { id: "whatsapp", text: "12. Qual o seu WhatsApp para contato?", type: "tel", required: true },
+        { id: "cidade", text: "13. Em qual cidade o pet desapareceu?", type: "text", required: true },
+        { id: "img_path", text: "14. Anexe de 1 a 3 fotos do seu pet.", type: "file", accept: "image/*", multiple: true, required: true }
     ];
 
     const buttonOptions = {
@@ -34,7 +34,7 @@ document.addEventListener("chat:start", () => {
     const summaryConfig = {
         title: "✅ Tudo certo! Revise as informações do seu pet:",
         labels: {
-            comprovante_path: "Comprovante",
+            comprovante_pagamento: "Comprovante de Pagamento",
             nome_pet: "Nome do Pet",
             tipo_pet: "Tipo",
             raca: "Raça",

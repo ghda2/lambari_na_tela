@@ -597,7 +597,8 @@ function initializeChatForm({ questions, options = {}, validationMessages = {}, 
                         '/videos': 'reportagens',
                         '/objeto-perdido': 'objetos_perdidos',
                         '/pet-perdido': 'pets_perdidos',
-                        '/propaganda': 'propagandas'
+                        '/propaganda': 'propagandas',
+                        '/propaganda-story': 'propagandas'
                     };
 
                     const tableName = tableMapping[actionPath];
