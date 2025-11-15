@@ -14,11 +14,13 @@ CREATE TABLE public.objetos_perdidos (
   observacao text,
   fotos ARRAY,
   created_at timestamp without time zone DEFAULT CURRENT_TIMESTAMP,
+  comprovante_pagamento character varying,
+  status character varying DEFAULT 'pending'::character varying,
   CONSTRAINT objetos_perdidos_pkey PRIMARY KEY (id)
 );
 CREATE TABLE public.pets_perdidos (
   id integer NOT NULL DEFAULT nextval('pets_perdidos_id_seq'::regclass),
-  comprovante_path ARRAY,
+  comprovante_pagamento ARRAY,
   nome_pet character varying,
   tipo_pet character varying,
   raca character varying,
@@ -33,6 +35,7 @@ CREATE TABLE public.pets_perdidos (
   sexo text,
   local_desaparecimento text,
   nome_tutor text,
+  status character varying DEFAULT 'pending'::character varying,
   CONSTRAINT pets_perdidos_pkey PRIMARY KEY (id)
 );
 CREATE TABLE public.propagandas (
@@ -54,6 +57,9 @@ CREATE TABLE public.propagandas (
   outras_informacoes text,
   materiais_divulgacao ARRAY,
   created_at timestamp without time zone DEFAULT CURRENT_TIMESTAMP,
+  comprovante_pagamento character varying,
+  tipo character varying,
+  status character varying DEFAULT 'pending'::character varying,
   CONSTRAINT propagandas_pkey PRIMARY KEY (id)
 );
 CREATE TABLE public.reportagens (
@@ -65,5 +71,6 @@ CREATE TABLE public.reportagens (
   img_path character varying,
   video_path character varying,
   created_at timestamp without time zone DEFAULT CURRENT_TIMESTAMP,
+  status character varying DEFAULT 'pending'::character varying,
   CONSTRAINT reportagens_pkey PRIMARY KEY (id)
 );

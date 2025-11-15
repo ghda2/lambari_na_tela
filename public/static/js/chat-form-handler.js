@@ -578,7 +578,7 @@ function initializeChatForm({ questions, options = {}, validationMessages = {}, 
                         for (const file of files) {
                             try {
                                 // Passar o nome base para a função de upload
-                                const filePath = await window.SupabaseUtils.uploadFileLocally(file, baseName);
+                                const filePath = await window.SupabaseUtils.uploadFileLocally(file, baseName, fieldId);
                                 filePaths.push(filePath);
                             } catch (uploadError) {
                                 console.error(`Erro no upload do arquivo ${file.name}:`, uploadError);
@@ -591,15 +591,16 @@ function initializeChatForm({ questions, options = {}, validationMessages = {}, 
                     // 3. Combinar dados JSON com os caminhos dos arquivos
                     const finalPayload = { ...jsonData, ...uploadedFilePaths };
 
-                    // 4. Adicionar tipo para propagandas
+                    // 4. Mapear o nome da tabela baseado na action do formulário
+                    const actionPath = new URL(hiddenForm.action).pathname; // ex: "/videos", "/objeto-perdido", etc.
+                    
+                    // 5. Adicionar tipo para propagandas
                     if (actionPath === '/propaganda') {
                         finalPayload.tipo = 'feed';
                     } else if (actionPath === '/propaganda-story') {
                         finalPayload.tipo = 'story';
                     }
 
-                    // 5. Mapear o nome da tabela baseado na action do formulário
-                    const actionPath = new URL(hiddenForm.action).pathname; // ex: "/videos", "/objeto-perdido", etc.
                     const tableMapping = {
                         '/videos': 'reportagens',
                         '/objeto-perdido': 'objetos_perdidos',

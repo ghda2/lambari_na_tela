@@ -31,11 +31,13 @@ function parseJsonIfNeeded(value) {
 }
 
 function isImagePath(p) {
-    return typeof p === 'string' && p.startsWith('/uploads/') && /\.(png|jpe?g|gif|webp|avif)$/i.test(p);
+    return typeof p === 'string' && 
+           (p.startsWith('/uploads/') && /\.(png|jpe?g|gif|webp|avif)$/i.test(p));
 }
 
 function isPdfPath(p) {
-    return typeof p === 'string' && p.startsWith('/uploads/') && /\.pdf$/i.test(p);
+    return typeof p === 'string' && 
+           (p.startsWith('/uploads/') && /\.pdf$/i.test(p));
 }
 
 function formatDate(dateString) {
@@ -219,7 +221,7 @@ function renderRecordDetails(record, table) {
     const additionalFields = [];
     
     Object.entries(record).forEach(([key, rawValue]) => {
-        if (key === 'id' || key === 'created_at' || key.includes('foto') || key.includes('imagem')) return;
+        if (key === 'id' || key === 'created_at' || key.includes('foto') || key.includes('imagem') || key === 'comprovante_pagamento') return;
         
         const value = parseJsonIfNeeded(rawValue);
         
@@ -273,6 +275,108 @@ function renderRecordDetails(record, table) {
     setupDownloadImagesButton(record);
 }
 
+function setupActionButtons(table, recordId) {
+    $('#btn-approve').addEventListener('click', async () => {
+        if (!confirm('Deseja aprovar este item?')) return;
+        try {
+            await updateRecord(table, recordId, { aprovado: true });
+            showToast('Item aprovado com sucesso!', 'success');
+            setTimeout(() => window.location.href = 'index.html', 1500);
+        } catch (e) {
+            showToast('Erro ao aprovar item: ' + e.message, 'error');
+        }
+    });
+    
+    $('#btn-delete').addEventListener('click', async () => {
+        if (!confirm('Deseja realmente excluir este item? Esta ação não pode ser desfeita.')) return;
+        try {
+            await deleteRecord(table, recordId);
+            showToast('Item excluído com sucesso!', 'success');
+            setTimeout(() => window.location.href = 'index.html', 1500);
+        } catch (e) {
+            showToast('Erro ao excluir item: ' + e.message, 'error');
+        }
+    });
+}
+
+function setupComprovanteButton(record) {
+    let comprovantePath = record.comprovante_pagamento;
+    console.log('setupComprovanteButton chamado');
+    console.log('Comprovante path ORIGINAL:', comprovantePath);
+    console.log('Tipo:', typeof comprovantePath);
+    
+    if (!comprovantePath) {
+        console.log('Sem comprovante - retornando');
+        return;
+    }
+    
+    // Parse JSON se for string
+    if (typeof comprovantePath === 'string') {
+        try {
+            const parsed = JSON.parse(comprovantePath);
+            if (Array.isArray(parsed)) {
+                comprovantePath = parsed[0];
+                console.log('Parsed de string JSON para array, primeiro elemento:', comprovantePath);
+            }
+        } catch (e) {
+            // Se não for JSON válido, assume que já é uma string simples
+            console.log('Não é JSON, mantendo como string:', comprovantePath);
+        }
+    } else if (Array.isArray(comprovantePath)) {
+        comprovantePath = comprovantePath[0];
+        console.log('Era array, pegou primeiro elemento:', comprovantePath);
+    }
+    
+    console.log('Comprovante path FINAL:', comprovantePath);
+    console.log('isImagePath result:', isImagePath(comprovantePath));
+    console.log('isPdfPath result:', isPdfPath(comprovantePath));
+    
+    const actionsDiv = $('.details-actions');
+    
+    if (!actionsDiv) {
+        console.error('Elemento .details-actions não encontrado!');
+        return;
+    }
+    
+    let button;
+    
+    if (isImagePath(comprovantePath)) {
+        console.log('Comprovante é imagem');
+        // Button to display image in modal
+        button = el('button', { 
+            class: 'btn btn-primary',
+            onclick: () => {
+                const localPath = comprovantePath.replace('/uploads/', '../uploads/');
+                $('#comprovante-image').src = localPath;
+                $('#comprovante-modal').classList.add('show');
+            }
+        }, [
+            el('i', { class: 'fas fa-eye' }),
+            el('span', {}, ' Ver Comprovante')
+        ]);
+    } else if (isPdfPath(comprovantePath)) {
+        console.log('Comprovante é PDF');
+        // Button to download PDF
+        button = el('button', { 
+            class: 'btn btn-primary',
+            onclick: () => {
+                const localPath = comprovantePath.replace('/uploads/', '../uploads/');
+                window.open(localPath, '_blank');
+            }
+        }, [
+            el('i', { class: 'fas fa-download' }),
+            el('span', {}, ' Baixar Comprovante')
+        ]);
+    } else {
+        console.log('Comprovante não é imagem nem PDF:', comprovantePath);
+        return;
+    }
+    
+    console.log('Adicionando botão');
+    actionsDiv.appendChild(button);
+    console.log('Botão adicionado com sucesso!');
+}
+
 function setupDownloadImagesButton(record) {
     const images = [];
     Object.entries(record).forEach(([key, rawValue]) => {
@@ -286,9 +390,9 @@ function setupDownloadImagesButton(record) {
     
     if (images.length === 0) return;
     
-    const actionsDiv = $('#details-actions');
+    const actionsDiv = $('.details-actions');
     const button = el('button', { 
-        class: 'btn btn-secondary',
+        class: 'btn btn-primary',
         onclick: () => {
             images.forEach(imgPath => {
                 const localPath = imgPath.replace('/uploads/', '../uploads/');

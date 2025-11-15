@@ -133,7 +133,27 @@ const storage = multer.diskStorage({
     }
 });
 
+const comprovanteStorage = multer.diskStorage({
+    destination: (req, file, cb) => {
+        let subDir = 'uploads/comprovantes/imagens';
+        if (file.mimetype === 'application/pdf') {
+            subDir = 'uploads/comprovantes/pdfs';
+        }
+        const fullPath = path.join(__dirname, subDir);
+        if (!fs.existsSync(fullPath)) {
+            fs.mkdirSync(fullPath, { recursive: true });
+        }
+        cb(null, fullPath);
+    },
+    filename: (req, file, cb) => {
+        // Preserve the original filename with minimal sanitization
+        const safeName = file.originalname.replace(/[^a-zA-Z0-9._\- ]/g, '_');
+        cb(null, safeName);
+    }
+});
+
 const upload = multer({ storage: storage });
+const uploadComprovante = multer({ storage: comprovanteStorage });
 
 // Handle file upload
 app.post('/upload', upload.single('file'), (req, res) => {
@@ -143,6 +163,19 @@ app.post('/upload', upload.single('file'), (req, res) => {
 
     // Return the relative path using forward slashes for URL compatibility
     const relativePath = `/uploads/${req.file.filename}`;
+    res.json({ filepath: relativePath });
+});
+
+// Handle comprovante upload
+app.post('/upload-comprovante', uploadComprovante.single('file'), (req, res) => {
+    if (!req.file) {
+        return res.status(400).json({ error: 'Nenhum arquivo enviado' });
+    }
+
+    // Determine subdirectory based on file type
+    const subDir = req.file.mimetype === 'application/pdf' ? 'pdfs' : 'imagens';
+    // Return the relative path
+    const relativePath = `/uploads/comprovantes/${subDir}/${req.file.filename}`;
     res.json({ filepath: relativePath });
 });
 

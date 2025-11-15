@@ -7,14 +7,16 @@ const { createClient } = supabase;
 const supabaseClient = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
 // Function to upload file locally
-async function uploadFileLocally(file, baseName = '') {
+async function uploadFileLocally(file, baseName = '', fieldId = '') {
     const formData = new FormData();
     formData.append('file', file);
     if (baseName) {
         formData.append('baseName', baseName);
     }
 
-    const response = await fetch('/upload', {
+    const endpoint = fieldId === 'comprovante_pagamento' ? '/upload-comprovante' : '/upload';
+
+    const response = await fetch(endpoint, {
         method: 'POST',
         body: formData
     });
