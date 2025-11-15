@@ -268,43 +268,39 @@ function renderRecordDetails(record, table) {
     
     // Setup comprovante button if exists
     setupComprovanteButton(record);
+    
+    // Setup download images button if exists
+    setupDownloadImagesButton(record);
 }
 
-function setupComprovanteButton(record) {
-    const comprovantePath = record.comprovante_pagamento;
-    if (!comprovantePath) return;
+function setupDownloadImagesButton(record) {
+    const images = [];
+    Object.entries(record).forEach(([key, rawValue]) => {
+        const value = parseJsonIfNeeded(rawValue);
+        if ((Array.isArray(value) && value.length > 0 && isImagePath(value[0]))) {
+            images.push(...value);
+        } else if (isImagePath(value)) {
+            images.push(value);
+        }
+    });
+    
+    if (images.length === 0) return;
     
     const actionsDiv = $('#details-actions');
-    let button;
-    
-    if (isImagePath(comprovantePath)) {
-        button = el('button', { 
-            class: 'btn btn-info',
-            onclick: () => {
-                const localPath = comprovantePath.replace('/uploads/', '../uploads/');
-                $('#comprovante-image').src = localPath;
-                $('#comprovante-modal').classList.add('show');
-            }
-        }, [
-            el('i', { class: 'fas fa-eye' }),
-            el('span', {}, 'Ver comprovante')
-        ]);
-    } else if (isPdfPath(comprovantePath)) {
-        button = el('button', { 
-            class: 'btn btn-info',
-            onclick: () => {
-                const localPath = comprovantePath.replace('/uploads/', '../uploads/');
+    const button = el('button', { 
+        class: 'btn btn-secondary',
+        onclick: () => {
+            images.forEach(imgPath => {
+                const localPath = imgPath.replace('/uploads/', '../uploads/');
                 window.open(localPath, '_blank');
-            }
-        }, [
-            el('i', { class: 'fas fa-download' }),
-            el('span', {}, 'Baixar comprovante')
-        ]);
-    }
+            });
+        }
+    }, [
+        el('i', { class: 'fas fa-download' }),
+        el('span', {}, ' Baixar Imagens')
+    ]);
     
-    if (button) {
-        actionsDiv.appendChild(button);
-    }
+    actionsDiv.appendChild(button);
 }
 
 function showError(message) {

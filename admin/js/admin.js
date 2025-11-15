@@ -15,7 +15,8 @@ const state = {
     stats: {
         pets_perdidos: 0,
         objetos_perdidos: 0,
-        propagandas: 0,
+        propaganda_feed: 0,
+        propaganda_story: 0,
         reportagens: 0
     }
 };
@@ -126,12 +127,25 @@ async function loadAllData() {
         const tables = ['pets_perdidos', 'objetos_perdidos', 'propagandas', 'reportagens'];
         const results = await Promise.all(tables.map(table => fetchTable(table)));
         
-        state.allRecords = results.flat();
+        // Process propagandas to separate feed and story
+        const propagandas = results[2] || [];
+        const propagandaFeed = propagandas.filter(r => r.tipo === 'feed').map(r => ({ ...r, _table: 'propaganda_feed' }));
+        const propagandaStory = propagandas.filter(r => r.tipo === 'story').map(r => ({ ...r, _table: 'propaganda_story' }));
+        
+        state.allRecords = [
+            ...results[0], // pets_perdidos
+            ...results[1], // objetos_perdidos
+            ...propagandaFeed,
+            ...propagandaStory,
+            ...results[3]  // reportagens
+        ];
         
         // Update stats
-        tables.forEach((table, index) => {
-            state.stats[table] = results[index].length;
-        });
+        state.stats.pets_perdidos = results[0].length;
+        state.stats.objetos_perdidos = results[1].length;
+        state.stats.propaganda_feed = propagandaFeed.length;
+        state.stats.propaganda_story = propagandaStory.length;
+        state.stats.reportagens = results[3].length;
         
         updateStats();
         filterAndSort();
@@ -198,12 +212,14 @@ function filterAndSort() {
 function updateStats() {
     $('#stat-pets').textContent = state.stats.pets_perdidos;
     $('#stat-objetos').textContent = state.stats.objetos_perdidos;
-    $('#stat-propagandas').textContent = state.stats.propagandas;
+    $('#stat-propaganda_feed').textContent = state.stats.propaganda_feed;
+    $('#stat-propaganda_story').textContent = state.stats.propaganda_story;
     $('#stat-reportagens').textContent = state.stats.reportagens;
     
     $('#badge-pets').textContent = state.stats.pets_perdidos;
     $('#badge-objetos').textContent = state.stats.objetos_perdidos;
-    $('#badge-propagandas').textContent = state.stats.propagandas;
+    $('#badge-propaganda_feed').textContent = state.stats.propaganda_feed;
+    $('#badge-propaganda_story').textContent = state.stats.propaganda_story;
     $('#badge-reportagens').textContent = state.stats.reportagens;
 }
 
@@ -237,7 +253,8 @@ function createPublicationCard(record) {
     const typeIcons = {
         pets_perdidos: { icon: 'fa-paw', gradient: 'linear-gradient(135deg, #8B5CF6, #7C3AED)' },
         objetos_perdidos: { icon: 'fa-search', gradient: 'linear-gradient(135deg, #3B82F6, #2563EB)' },
-        propagandas: { icon: 'fa-bullhorn', gradient: 'linear-gradient(135deg, #F59E0B, #D97706)' },
+        propaganda_feed: { icon: 'fa-bullhorn', gradient: 'linear-gradient(135deg, #F59E0B, #D97706)' },
+        propaganda_story: { icon: 'fa-camera', gradient: 'linear-gradient(135deg, #EC4899, #BE185D)' },
         reportagens: { icon: 'fa-newspaper', gradient: 'linear-gradient(135deg, #10B981, #059669)' }
     };
     
@@ -382,7 +399,8 @@ function initEventListeners() {
                 dashboard: 'Dashboard',
                 pets_perdidos: 'Pets Perdidos',
                 objetos_perdidos: 'Objetos Perdidos',
-                propagandas: 'Propagandas',
+                propaganda_feed: 'Propaganda Feed',
+                propaganda_story: 'Propaganda Story',
                 reportagens: 'Reportagens'
             };
             

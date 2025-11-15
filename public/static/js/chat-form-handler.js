@@ -591,7 +591,14 @@ function initializeChatForm({ questions, options = {}, validationMessages = {}, 
                     // 3. Combinar dados JSON com os caminhos dos arquivos
                     const finalPayload = { ...jsonData, ...uploadedFilePaths };
 
-                    // 4. Mapear o nome da tabela baseado na action do formulário
+                    // 4. Adicionar tipo para propagandas
+                    if (actionPath === '/propaganda') {
+                        finalPayload.tipo = 'feed';
+                    } else if (actionPath === '/propaganda-story') {
+                        finalPayload.tipo = 'story';
+                    }
+
+                    // 5. Mapear o nome da tabela baseado na action do formulário
                     const actionPath = new URL(hiddenForm.action).pathname; // ex: "/videos", "/objeto-perdido", etc.
                     const tableMapping = {
                         '/videos': 'reportagens',
@@ -606,7 +613,7 @@ function initializeChatForm({ questions, options = {}, validationMessages = {}, 
                         throw new Error(`Tabela não encontrada para action: ${actionPath}`);
                     }
 
-                    // 5. Enviar dados para o Supabase
+                    // 6. Enviar dados para o Supabase
                     await window.SupabaseUtils.submitToSupabase(tableName, finalPayload);
 
                     // Sucesso - limpar estado e redirecionar
