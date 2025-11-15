@@ -491,6 +491,43 @@ function initEventListeners() {
 // INITIALIZATION
 // ===================================
 document.addEventListener('DOMContentLoaded', async () => {
+    // Check authentication
+    await checkAuthentication();
+    
     initEventListeners();
     await loadAllData();
 });
+
+// Check if user is authenticated
+async function checkAuthentication() {
+    try {
+        const response = await fetch('/admin/check-auth');
+        const data = await response.json();
+        
+        if (!data.authenticated) {
+            window.location.href = '/admin/login.html';
+        }
+    } catch (error) {
+        console.error('Erro ao verificar autenticação:', error);
+        window.location.href = '/admin/login.html';
+    }
+}
+
+// Logout function
+async function logout() {
+    if (confirm('Tem certeza que deseja sair?')) {
+        try {
+            await fetch('/admin/logout', { method: 'POST' });
+            window.location.href = '/admin/login.html';
+        } catch (error) {
+            console.error('Erro ao fazer logout:', error);
+            alert('Erro ao fazer logout');
+        }
+    }
+}
+
+// Add logout button listener
+const logoutBtn = document.getElementById('logout-btn');
+if (logoutBtn) {
+    logoutBtn.addEventListener('click', logout);
+}

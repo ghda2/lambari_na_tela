@@ -3,6 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Lambari NA TELA - Conectando a comunidade de Lambari. Publique reportagens, anuncie pets e objetos perdidos, faça propagandas e fique por dentro da previsão do tempo.">
+    <meta name="keywords" content="Lambari, comunidade, reportagens, pets perdidos, objetos perdidos, propaganda, Lambari MG">
     <title>Lambari NA TELA - Conectando a Comunidade</title>
     <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📹</text></svg>">
     <link rel="stylesheet" href="/static/css/style.css">
@@ -11,102 +13,220 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
     <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
         body {
-            background: linear-gradient(135deg, #2d2c44 0%, #d61f1c 100%);
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
             min-height: 100vh;
             margin: 0;
             font-family: 'Poppins', sans-serif;
             color: white;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        /* Background Animation */
+        body::before {
+            content: '';
+            position: fixed;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(214, 31, 28, 0.1) 0%, transparent 70%);
+            animation: pulse 15s ease-in-out infinite;
+            z-index: 0;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1) rotate(0deg); opacity: 0.3; }
+            50% { transform: scale(1.1) rotate(180deg); opacity: 0.5; }
         }
 
         .linktree-container {
-            max-width: 400px;
+            max-width: 680px;
             margin: 0 auto;
-            padding: 40px 20px;
+            padding: 50px 20px;
             text-align: center;
             min-height: 100vh;
             display: flex;
             flex-direction: column;
+            position: relative;
+            z-index: 1;
         }
 
         .profile-section {
-            margin-bottom: 40px;
+            margin-bottom: 50px;
+            animation: fadeInDown 0.8s ease-out;
+        }
+
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
         .logo {
-            width: 120px;
-            height: 120px;
+            width: 140px;
+            height: 140px;
             display: flex;
             align-items: center;
             justify-content: center;
-            margin: 0 auto 20px;
+            margin: 0 auto 25px;
+            background: linear-gradient(135deg, rgba(255,255,255,0.1), rgba(255,255,255,0.05));
+            border-radius: 50%;
+            padding: 15px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+            border: 3px solid rgba(214, 31, 28, 0.3);
+            transition: all 0.4s ease;
+            animation: logoFloat 3s ease-in-out infinite;
+        }
+
+        @keyframes logoFloat {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+        }
+
+        .logo:hover {
+            transform: scale(1.05) rotate(5deg);
+            border-color: rgba(214, 31, 28, 0.6);
+            box-shadow: 0 15px 50px rgba(214, 31, 28, 0.4);
         }
 
         .logo img {
-            width: 120px;
-            height: 120px;
-            object-fit: contain;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 50%;
+            filter: drop-shadow(0 2px 8px rgba(0,0,0,0.2));
         }
 
         .site-title {
-            font-size: 2rem;
+            font-size: 2.8rem;
             font-weight: 700;
             color: white;
-            margin: 0 0 10px 0;
-            text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+            margin: 0 0 15px 0;
+            text-shadow: 0 4px 12px rgba(0,0,0,0.5);
+            letter-spacing: -0.5px;
+            background: linear-gradient(135deg, #ffffff, #e0e0e0);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
         }
 
         .site-subtitle {
-            font-size: 1rem;
-            font-weight: 300;
-            color: rgba(255,255,255,0.8);
+            font-size: 1.1rem;
+            font-weight: 400;
+            color: rgba(255,255,255,0.85);
             margin: 0;
-            line-height: 1.4;
+            line-height: 1.6;
+            max-width: 500px;
+            margin: 0 auto;
         }
 
         .links-section {
             flex: 1;
             display: flex;
             flex-direction: column;
-            gap: 16px;
+            gap: 18px;
+            animation: fadeInUp 0.8s ease-out 0.2s both;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
         .link-button {
-            display: block;
-            background: white;
-            color: #2d2c44;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(255, 255, 255, 0.95);
+            color: #1a1a2e;
             text-decoration: none;
-            padding: 18px 24px;
-            border-radius: 12px;
+            padding: 20px 30px;
+            border-radius: 16px;
             font-weight: 600;
-            font-size: 1rem;
-            transition: all 0.3s ease;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            font-size: 1.05rem;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 4px 20px rgba(0,0,0,0.15);
             border: 2px solid transparent;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .link-button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(214, 31, 28, 0.2), transparent);
+            transition: left 0.5s;
+        }
+
+        .link-button:hover::before {
+            left: 100%;
         }
 
         .link-button:hover {
-            background: #d61f1c;
+            background: linear-gradient(135deg, #d61f1c, #ff3838);
             color: white;
-            transform: translateY(-2px);
-            box-shadow: 0 8px 20px rgba(214, 31, 28, 0.3);
+            transform: translateY(-4px) scale(1.02);
+            box-shadow: 0 12px 35px rgba(214, 31, 28, 0.4);
+            border-color: rgba(255, 255, 255, 0.2);
         }
 
         .link-button:active {
-            transform: translateY(0);
+            transform: translateY(-2px) scale(1.01);
         }
 
         .link-icon {
-            margin-right: 12px;
-            font-size: 1.2rem;
+            margin-right: 15px;
+            font-size: 1.3rem;
+            transition: transform 0.3s ease;
+        }
+
+        .link-button:hover .link-icon {
+            transform: scale(1.2) rotate(5deg);
+        }
+
+        /* Specific icons colors before hover */
+        .link-button:nth-child(1) .link-icon { color: #2196F3; }
+        .link-button:nth-child(2) .link-icon { color: #FF9800; }
+        .link-button:nth-child(3) .link-icon { color: #9C27B0; }
+        .link-button:nth-child(4) .link-icon { color: #4CAF50; }
+        .link-button:nth-child(5) .link-icon { color: #25D366; }
+
+        .link-button:hover .link-icon {
+            color: white;
         }
 
         .weather-section {
-            margin-top: 40px;
-            padding: 20px;
-            background: rgba(255,255,255,0.1);
-            border-radius: 12px;
+            margin-top: 50px;
+            padding: 30px;
+            background: linear-gradient(135deg, rgba(255,255,255,0.1), rgba(255,255,255,0.05));
+            border-radius: 20px;
             backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,0.2);
+            box-shadow: 0 8px 32px rgba(0,0,0,0.2);
+            animation: fadeInUp 0.8s ease-out 0.4s both;
         }
 
         .weather-widget {
@@ -114,106 +234,151 @@
         }
 
         .weather-title {
-            font-size: 1.1rem;
+            font-size: 1.3rem;
             font-weight: 600;
-            margin: 0 0 10px 0;
+            margin: 0 0 20px 0;
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 8px;
+            gap: 12px;
         }
 
         .weather-icon {
-            font-size: 1.5rem;
-            margin-right: 8px;
+            font-size: 1.8rem;
+        }
+
+        .weather-content {
+            display: grid;
+            gap: 12px;
         }
 
         .weather-content p {
-            margin: 5px 0;
+            margin: 0;
+            font-size: 1rem;
+            opacity: 0.95;
+            padding: 10px;
+            background: rgba(255,255,255,0.05);
+            border-radius: 10px;
+            border-left: 3px solid #d61f1c;
+        }
+
+        .footer {
+            margin-top: 40px;
+            padding: 20px;
+            text-align: center;
             font-size: 0.9rem;
-            opacity: 0.9;
+            color: rgba(255,255,255,0.6);
+            animation: fadeInUp 0.8s ease-out 0.6s both;
+        }
+
+        .footer a {
+            color: #d61f1c;
+            text-decoration: none;
+            font-weight: 600;
+            transition: color 0.3s ease;
+        }
+
+        .footer a:hover {
+            color: #ff3838;
         }
 
         @media (max-width: 480px) {
             .linktree-container {
-                padding: 20px 15px;
+                padding: 30px 15px;
             }
 
             .logo {
-                width: 100px;
-                height: 100px;
-            }
-
-            .logo img {
-                width: 100px;
-                height: 100px;
+                width: 110px;
+                height: 110px;
             }
 
             .site-title {
-                font-size: 1.8rem;
+                font-size: 2.2rem;
+            }
+
+            .site-subtitle {
+                font-size: 0.95rem;
             }
 
             .link-button {
-                padding: 16px 20px;
-                font-size: 0.95rem;
+                padding: 18px 25px;
+                font-size: 1rem;
+            }
+
+            .weather-section {
+                padding: 25px 20px;
+            }
+
+            .weather-title {
+                font-size: 1.1rem;
             }
         }
     </style>
 </head>
-<body class="">
+<body>
     <div class="linktree-container">
         <div class="profile-section">
             <div class="logo">
-                <img src="/uploads/lambari_na_tela_logo.svg" alt="Lambari na Tela Logo">
+                <img src="/uploads/logotipo.jpg" alt="Lambari na Tela Logo">
             </div>
             <h1 class="site-title">Lambari NA TELA</h1>
-            <p class="site-subtitle">Sua conexão com a comunidade de Lambari</p>
+            <p class="site-subtitle">Conectando nossa comunidade através da informação e comunicação</p>
         </div>
 
         <div class="links-section">
             <a href="/forms" class="link-button">
                 <i class="link-icon fas fa-newspaper"></i>
-                Publicar Reportagem
+                <span>Publicar Reportagem</span>
             </a>
             <a href="/pet-perdido" class="link-button">
                 <i class="link-icon fas fa-paw"></i>
-                Anunciar Pet Perdido
+                <span>Anunciar Animal Perdido</span>
             </a>
             <a href="/objeto-perdido" class="link-button">
                 <i class="link-icon fas fa-search"></i>
-                Anunciar Objeto Perdido
+                <span>Anunciar Objeto Perdido</span>
             </a>
             <a href="/propaganda" class="link-button">
                 <i class="link-icon fas fa-bullhorn"></i>
-                Fazer Propaganda
+                <span>Fazer Propaganda</span>
             </a>
             <a href="/propaganda-feed" class="link-button">
                 <i class="link-icon fas fa-rss"></i>
-                Fazer propaganda no Feed
+                <span>Fazer propaganda no Feed</span>
             </a>
             <a href="/propaganda-story" class="link-button">
                 <i class="link-icon fas fa-camera"></i>
-                Fazer propaganda no Story
+                <span>Fazer propaganda no Story</span>
             </a>
-            <a href="https://chat.whatsapp.com/IoCpO3NVEKsApG3kQ8OFCU" class="link-button">
+            <a href="https://chat.whatsapp.com/IoCpO3NVEKsApG3kQ8OFCU" target="_blank" rel="noopener noreferrer" class="link-button">
                 <i class="link-icon fab fa-whatsapp"></i>
-                Grupo no WhatsApp
+                <span>Grupo no WhatsApp</span>
             </a>
         </div>
 
         <section class="weather-section">
             <div class="weather-widget">
                 <h2 class="weather-title">
-                    <span id="weather-icon" class="fas fa-cloud-sun"></span>
-                    Previsão do Tempo em Lambari
+                    <i id="weather-icon" class="weather-icon fas fa-cloud-sun"></i>
+                    <span>Clima em Lambari</span>
                 </h2>
                 <div class="weather-content" id="weather-info">
-                    <p id="temperature">Carregando...</p>
-                    <p id="description">Carregando...</p>
-                    <p id="wind">Carregando...</p>
+                    <p id="temperature"><i class="fas fa-temperature-high"></i> Carregando temperatura...</p>
+                    <p id="description"><i class="fas fa-cloud"></i> Carregando condições...</p>
+                    <p id="wind"><i class="fas fa-wind"></i> Carregando ventos...</p>
                 </div>
             </div>
         </section>
+
+        <footer class="footer">
+            <p>
+                <i class="fas fa-heart" style="color: #d61f1c;"></i> 
+                Feito com amor para a comunidade de Lambari
+            </p>
+            <p style="margin-top: 10px; font-size: 0.85rem;">
+                © 2025 Lambari NA TELA - Todos os direitos reservados
+            </p>
+        </footer>
     </div>
     <script src="/static/js/modals.js"></script>
     <script src="/static/js/utils.js"></script>

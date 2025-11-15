@@ -85,10 +85,27 @@ function initializeChatForm({ questions, options = {}, validationMessages = {}, 
         const optionButtons = inputContainer.querySelectorAll('.option-buttons button');
 
         if (inputField) inputField.disabled = disable;
-        if (sendBtn) sendBtn.disabled = disable;
         if (skipBtn) skipBtn.disabled = disable;
         
         optionButtons.forEach(btn => btn.disabled = disable);
+
+        // Para o botão de enviar, considerar a validação quando habilitando
+        if (sendBtn) {
+            if (disable) {
+                sendBtn.disabled = true;
+            } else {
+                // Quando habilitando, verificar se deve manter desabilitado por validação
+                // A validação será refeita pelo event listener do input
+                const question = questions[state.currentQuestionIndex];
+                if (question && inputField) {
+                    // Trigger validation
+                    const event = new Event('input', { bubbles: true });
+                    inputField.dispatchEvent(event);
+                } else {
+                    sendBtn.disabled = false;
+                }
+            }
+        }
 
         if (!disable && inputField) {
              inputField.focus();
@@ -204,14 +221,51 @@ function initializeChatForm({ questions, options = {}, validationMessages = {}, 
         inputContainer.appendChild(inputEl);
         inputContainer.appendChild(sendBtn);
 
+        // Função para validar e atualizar estado do botão
+        function validateAndUpdateButton() {
+            if (state.isLocked) return; // Não validar se estiver bloqueado
+            
+            let isValid = true;
+            
+            if (question.required) {
+                // Para campos obrigatórios, verificar se não está vazio
+                if (!inputEl.value || inputEl.value.trim() === "") {
+                    isValid = false;
+                }
+            }
+            
+            if (question.type === 'tel' && inputEl.value) {
+                // Para campos de telefone, verificar se a máscara está completa
+                const digits = inputEl.value.replace(/\D/g, '');
+                // Para telefone brasileiro: 10 dígitos (fixo) ou 11 dígitos (celular)
+                if (digits.length < 10 || digits.length > 11) {
+                    isValid = false;
+                }
+            }
+            
+            sendBtn.disabled = !isValid;
+        }
+
         if (question.type === 'tel') {
             // Verifica a existência de maskPhone globalmente
             if (typeof maskPhone === 'function') {
-                inputEl.addEventListener("input", (e) => e.target.value = maskPhone(e.target.value));
+                inputEl.addEventListener("input", (e) => {
+                    e.target.value = maskPhone(e.target.value);
+                    // Após aplicar a máscara, validar o botão
+                    setTimeout(validateAndUpdateButton, 0);
+                });
             } else {
                 console.warn("A função maskPhone não está definida. A máscara de telefone não será aplicada.");
+                // Mesmo sem máscara, adicionar validação
+                inputEl.addEventListener("input", validateAndUpdateButton);
             }
+        } else {
+            // Para outros tipos de campo, adicionar validação básica
+            inputEl.addEventListener("input", validateAndUpdateButton);
         }
+
+        // Validação inicial
+        validateAndUpdateButton();
 
     sendBtn.addEventListener("click", () => handleUserInput());
         inputEl.addEventListener("keypress", (e) => {

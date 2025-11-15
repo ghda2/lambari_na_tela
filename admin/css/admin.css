@@ -228,9 +228,13 @@ body {
 .sidebar-footer {
     padding: var(--spacing-lg);
     border-top: 1px solid var(--border-color);
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-sm);
 }
 
-.theme-toggle {
+.theme-toggle,
+.logout-btn {
     width: 100%;
     padding: var(--spacing-md);
     border: none;
@@ -250,7 +254,17 @@ body {
     color: white;
 }
 
-.theme-toggle i {
+.logout-btn {
+    background: var(--bg-tertiary);
+}
+
+.logout-btn:hover {
+    background: var(--color-danger);
+    color: white;
+}
+
+.theme-toggle i,
+.logout-btn i {
     font-size: 1.125rem;
 }
 

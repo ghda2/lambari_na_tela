@@ -3,23 +3,117 @@ const multer = require('multer');
 const path = require('path');
 const fs = require('fs');
 const cors = require('cors');
+const session = require('express-session');
+const SQLiteStore = require('connect-sqlite3')(session);
+require('dotenv').config();
 
 const app = express();
 const PORT = process.env.PORT || 3000;
 
 // Middleware
-app.use(cors());
+app.use(cors({
+    origin: true,
+    credentials: true
+}));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+
+// Session configuration (must be before routes)
+app.use(session({
+    store: new SQLiteStore({
+        db: 'sessions.db',
+        dir: './data'
+    }),
+    secret: process.env.SESSION_SECRET || 'default-secret-key-change-in-production',
+    resave: false,
+    saveUninitialized: false,
+    cookie: {
+        maxAge: 24 * 60 * 60 * 1000, // 24 hours
+        httpOnly: true,
+        secure: false, // Set to true only in production with HTTPS
+        sameSite: 'lax'
+    }
+}));
 
 // Serve static files from public directory
 app.use(express.static(path.join(__dirname, 'public')));
 
-// Serve static files for the admin panel
-app.use('/admin', express.static(path.join(__dirname, 'admin')));
-
 // Serve uploads directory
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+
+// Middleware to check admin authentication
+function requireAuth(req, res, next) {
+    if (req.session && req.session.isAuthenticated) {
+        return next();
+    }
+    res.redirect('/admin/login.html');
+}
+
+// Admin login route
+app.post('/admin/login', (req, res) => {
+    const { username, password } = req.body;
+    
+    console.log('Tentativa de login:', { username });
+    
+    const adminUsername = process.env.ADMIN_USERNAME || 'admin';
+    const adminPassword = process.env.ADMIN_PASSWORD || 'lambari2025';
+    
+    console.log('Credenciais esperadas:', { adminUsername, passwordMatch: password === adminPassword });
+    
+    if (username === adminUsername && password === adminPassword) {
+        req.session.isAuthenticated = true;
+        req.session.username = username;
+        
+        // Save session explicitly
+        req.session.save((err) => {
+            if (err) {
+                console.error('Erro ao salvar sessão:', err);
+                return res.status(500).json({ success: false, error: 'Erro ao salvar sessão' });
+            }
+            console.log('Login bem-sucedido! Sessão salva:', req.session);
+            res.json({ success: true, message: 'Login realizado com sucesso' });
+        });
+    } else {
+        console.log('Login falhou - credenciais incorretas');
+        res.status(401).json({ success: false, error: 'Usuário ou senha incorretos' });
+    }
+});
+
+// Admin logout route
+app.post('/admin/logout', (req, res) => {
+    req.session.destroy((err) => {
+        if (err) {
+            return res.status(500).json({ error: 'Erro ao fazer logout' });
+        }
+        res.json({ success: true, message: 'Logout realizado com sucesso' });
+    });
+});
+
+// Check auth status
+app.get('/admin/check-auth', (req, res) => {
+    if (req.session && req.session.isAuthenticated) {
+        res.json({ authenticated: true, username: req.session.username });
+    } else {
+        res.json({ authenticated: false });
+    }
+});
+
+// Serve admin login page (public)
+app.get('/admin/login.html', (req, res) => {
+    res.sendFile(path.join(__dirname, 'admin', 'login.html'));
+});
+
+// Serve admin index page (protected)
+app.get('/admin/', requireAuth, (req, res) => {
+    res.sendFile(path.join(__dirname, 'admin', 'index.html'));
+});
+
+app.get('/admin/index.html', requireAuth, (req, res) => {
+    res.sendFile(path.join(__dirname, 'admin', 'index.html'));
+});
+
+// Protect all other admin routes
+app.use('/admin', requireAuth, express.static(path.join(__dirname, 'admin')));
 
 // Ensure uploads directory exists
 const uploadsDir = path.join(__dirname, 'uploads');

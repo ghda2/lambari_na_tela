@@ -27,7 +27,8 @@ function maskPhone(value) {
  */
 function validatePhoneNumber(phoneNumber) {
     const digits = phoneNumber.replace(/\D/g, '');
-    return digits.length >= 10 && digits.length <= 15;
+    // Para telefone brasileiro: exatamente 10 dígitos (fixo) ou 11 dígitos (celular)
+    return digits.length === 10 || digits.length === 11;
 }
 
 /**

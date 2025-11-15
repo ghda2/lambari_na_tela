@@ -13,8 +13,8 @@ RUN npm install
 # Copy application code
 COPY . .
 
-# Create uploads directory at project root
-RUN mkdir -p uploads
+# Create uploads and data directories
+RUN mkdir -p uploads data
 
 # Expose port
 EXPOSE 3000
